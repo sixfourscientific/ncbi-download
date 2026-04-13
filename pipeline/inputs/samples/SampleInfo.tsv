@@ -1,0 +1,3 @@
+name	type	path	optional
+sample1	typeA	/media/groups/apps_benchmarking/active/analyses/mheatley/templates/nextflow/pipeline/inputs/samples/files/file.name.sample1.fasta	/media/groups/apps_benchmarking/active/analyses/mheatley/templates/nextflow/pipeline/inputs/samples/files/file.name.optional1.txt
+sample2	typeB	/media/groups/apps_benchmarking/active/analyses/mheatley/templates/nextflow/pipeline/inputs/samples/files/file.name.sample2.fasta.gz	null

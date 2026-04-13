@@ -1,0 +1,14 @@
+{
+  "VERSION" : [],
+  "LABEL"   : {
+    "INCLUDE"  : true,
+    "SOFTWARE" : null,
+    "PRE"      : null,
+    "POST"     : null,
+    "ALIASES"  : {}
+    },
+  "ARGS"    : {
+    "CORE"    : {},
+    "SWEEP"   : null
+    }
+}
