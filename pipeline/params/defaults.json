@@ -14,5 +14,25 @@
       "EXTENSIONS": {},
       "GUNZIPPED": false
     }
+  },
+  "WGET": {
+    "CORE": {
+      "TAXONOMY": {
+        "CONFIG": {
+          "VERSION": [],
+          "LABEL": {
+            "INCLUDE": true,
+            "SOFTWARE": null,
+            "PRE": null,
+            "POST": null,
+            "ALIASES": {}
+          },
+          "ARGS": {
+            "CORE": {},
+            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Wget_Core_Taxonomy.tsv"
+          }
+        }
+      }
+    }
   }
 }
