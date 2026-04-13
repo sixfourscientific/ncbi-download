@@ -37,6 +37,10 @@ include {
     Info_Parse as ParseInfo;
     } from "${params.importMap.subworkflows}/core/Info_Parse"
 
+include {
+    SUBWORKFLOW as Taxonomy;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Taxonomy"
+
 ////BRANCH_IMPORT////
 
 
@@ -49,6 +53,8 @@ Parameters = params
 EXECUTE  = params.execute.split(',')
 
 RUN_ALL  = EXECUTE.contains('all')
+
+RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
 
 ////BRANCH_FILTER////
 
@@ -85,6 +91,8 @@ workflow {
         
         // BRANCH( Inputs|BRANCH.out.Main)
 
+        Taxonomy( Parameters, Inputs | filter { RUN_TAXONOMY }  )
+
         ////BRANCH_RUN////
 
 
@@ -94,12 +102,34 @@ workflow {
 
     publish: 
     
+        Taxonomy = Taxonomy.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
         ////BRANCH_PUBLISH////
 
     }
 
 
 output {
+
+        Taxonomy { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "taxonomy/$indexMeta.run" }
+            index {
+                path   'bridge-taxonomy.csv'
+                header true
+                sep    '\t'
+                }
+            }
 
         ////BRANCH_OUTPUT////
 
