@@ -40,14 +40,9 @@ workflow STAGING {
 
                 | map { coreMeta ->
 
-                    def skipOptional = !coreMeta.optional || !coreMeta.STAGING.ARGS.containsKey('--optional')
-
-                    def optionalFile  = file( !skipOptional ? coreMeta.optional : 'optional.dummy' )
-
                     return [
                         coreMeta,
-                        coreMeta.path,
-                        optionalFile,
+                        coreMeta.url,
                         coreMeta.STAGING.ARGS,
                         ] }
 

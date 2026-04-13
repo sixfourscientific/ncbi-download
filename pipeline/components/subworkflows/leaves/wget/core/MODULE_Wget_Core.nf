@@ -38,15 +38,14 @@ process MODULE {
 
     input:
 
-        tuple   val  (CoreMeta),
-                path (INPUT),
-                path (OPTIONAL),
-                val  (Arguments)
+        tuple   val (CoreMeta),
+                val (sourceURL),
+                val (Arguments)
 
     output:
 
         tuple   val  (CoreMeta),
-                path ('{*.txt,**/*.txt}'),
+                path ('*.{gz,json}'),
 
                 emit: Main
 
@@ -54,14 +53,45 @@ process MODULE {
 
     script:
 
-        println(">>TASK>> $task.process $task.tag; ATTEMPT: $task.attempt | CPUS: $task.cpus (max: $task.resourceLimits.cpus) | MEMORY: $task.memory (max: $task.resourceLimits.memory) | TIME: $task.time (max: $task.resourceLimits.time) | VERSION: $task.ext.version | EXEC: $task.ext.executable\n")
+        // SETUP
+
+        def fileName  = "${file(sourceURL).getName()}"
+        def localMD5  = "local.md5"
+        def sourceMD5 = "source.md5"
 
         """
+        # download taxonomy data
 
-        mkdir -p subDir
-        echo 'TEST' > OUTPUT1.txt
-        echo 'TEST' > subDir/OUTPUT2.txt
+        wget -q $sourceURL
 
+        # check wget status
+        case "\$?" in
+            0) echo "Download: Complete" ;;
+            ?) echo "Download: Error (\$?)" ;;
+        esac
+
+        # check corresponding md5 for gz files
+        if [[ "$sourceURL" == *.gz ]]; then
+
+            # download source md5sum
+            wget -q ${sourceURL}.md5
+
+            # extract hash & record in file
+            cat *.md5 | cut -d ' ' -f 1 > $sourceMD5
+
+            # calculate local md5sum, extract hash & record in file
+            md5sum $fileName | cut -d ' ' -f 1 > $localMD5
+
+            # compare local & source md5sums
+            cmp $sourceMD5 $localMD5
+
+            # check cmp status
+            case "\$?" in
+                0) echo "MD5: Match" ;;
+                ?) echo "MD5: Differ (\$?)" ;;
+            esac
+
+        fi
         """
 
     }

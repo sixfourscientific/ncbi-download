@@ -54,7 +54,7 @@ EXECUTE  = params.execute.split(',')
 
 RUN_ALL  = EXECUTE.contains('all')
 
-RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
+// RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
 
 ////BRANCH_FILTER////
 
@@ -77,12 +77,13 @@ workflow {
 
         // SUPPLEMENTARY
 
-        def SUPPLEMENTARYMeta = [
-            INFO : params.SUPPLEMENTARY,
-            ID   : "SUPPLEMENTARY",
+        def TaxonomyMeta = [
+            INFO     : params.TAXONOMY,
+            ID       : "TAXONOMY",
+            DETAILED : true,
             ]
 
-        SUPPLEMENTARY = ParseInfo( SUPPLEMENTARYMeta )
+        TAXONOMY = ParseInfo( TaxonomyMeta )
 
 
         // BRANCHES
@@ -91,7 +92,7 @@ workflow {
         
         // BRANCH( Inputs|BRANCH.out.Main)
 
-        Taxonomy( Parameters, Inputs | filter { RUN_TAXONOMY }  )
+        Taxonomy( Parameters, TAXONOMY ) // | filter { RUN_TAXONOMY }  )
 
         ////BRANCH_RUN////
 
