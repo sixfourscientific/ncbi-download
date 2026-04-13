@@ -15,8 +15,8 @@
       "GUNZIPPED": false
     }
   },
-  "WGET": {
-    "CORE": {
+  "CUSTOM": {
+    "DOWNLOAD": {
       "TAXONOMY": {
         "CONFIG": {
           "VERSION": [],
@@ -29,7 +29,7 @@
           },
           "ARGS": {
             "CORE": {},
-            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Wget_Core_Taxonomy.tsv"
+            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Custom_Download_Taxonomy.tsv"
           }
         }
       }

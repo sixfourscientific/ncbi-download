@@ -10,7 +10,7 @@ include {
 
 include { 
     MODULE as Run;
-    } from "${params.importMap.subworkflows}/leaves/wget/core/MODULE_Wget_Core.nf"
+    } from "${params.importMap.subworkflows}/leaves/custom/download/MODULE_Custom_Download.nf"
 
 workflow STAGING {
 
@@ -55,8 +55,8 @@ workflow STAGING {
                 | map { coreMeta, output ->
                     
                     def outputMeta = [
-                        WGET : [
-                            CORE : [ 
+                        CUSTOM : [
+                            DOWNLOAD : [ 
                                 (coreMeta.STAGING.BRANCH): [
                                     main : output,
                                     ] ] ] ]

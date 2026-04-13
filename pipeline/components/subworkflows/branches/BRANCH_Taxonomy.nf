@@ -12,8 +12,8 @@ include {
     } from "${params.importMap.subworkflows}/core/Config_Parse"
 
 include {
-    STAGING as CoreWget;
-    } from "${params.importMap.subworkflows}/leaves/wget/core/STAGING_Wget_Core.nf"
+    STAGING as DownloadCustom;
+    } from "${params.importMap.subworkflows}/leaves/custom/download/STAGING_Custom_Download.nf"
 
 ////LEAF_IMPORT////
 
@@ -32,11 +32,11 @@ workflow SUBWORKFLOW {
 
         ////LEAF_START////
 
-        // WGET CORE
+        // CUSTOM DOWNLOAD
         
-        ConfigCoreWget = ParseConfig( Parameters, [software: 'WGET', command: 'CORE', branch: 'TAXONOMY'] )
+        ConfigDownloadCustom = ParseConfig( Parameters, [software: 'CUSTOM', command: 'DOWNLOAD', branch: 'TAXONOMY'] )
         
-        CoreWget( Inputs, ConfigCoreWget )
+        DownloadCustom( Inputs, ConfigDownloadCustom )
 
         ////LEAF_PARSE_RUN////
 
