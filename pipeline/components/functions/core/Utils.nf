@@ -25,6 +25,39 @@ def parseSupplementary ( supplementary, PARAMS ){
 
 
 
+def getUrlTag(url) {
+
+    def urlObj = url.toURL()
+
+    // extract path stem & file
+    def (stemList, fileName) = urlObj
+        .path
+        .tokenize('/')
+        .with { parts -> 
+            return [parts[0..-2], parts.last()] }
+
+    def hostTag = urlObj
+        .host
+        .replace('.','-')
+
+    def stemTag = stemList
+        .join('-')
+
+    // remove final 1 or 2 file extensions
+    def baseName = fileName
+        .replaceAll(/(\.[^.]+){1,2}$/, '')
+
+    def urlTag = [
+        hostTag,
+        stemTag,
+        baseName,
+        ]
+        .join('-')
+
+    return urlTag }
+
+
+
 def collapseMap(map, linkList = [], delimiter = '.') {
     def result = [:]
 

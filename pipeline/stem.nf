@@ -29,6 +29,7 @@ include {
     parseSupplementary as parseSupplementary;
     viewMeta as viewMeta;
     prepBridge as prepBridge;
+    getUrlTag as getUrlTag;
     } from "$params.importMap.functions/core/Utils"
 
 // SUBWORKFLOWS
@@ -80,10 +81,20 @@ workflow {
         def TaxonomyMeta = [
             INFO     : params.TAXONOMY,
             ID       : "TAXONOMY",
-            DETAILED : true,
             ]
 
-        TAXONOMY = ParseInfo( TaxonomyMeta )
+        TAXONOMY = ParseInfo( TaxonomyMeta ) 
+            
+            // create custom run tag from parsed url
+            | map { coreMeta ->
+                
+                def urlTag = getUrlTag(coreMeta['url'])
+
+                def coreMetaNew = coreMeta + [
+                    RUN : urlTag,
+                    ]
+
+                return coreMetaNew }
 
 
         // BRANCHES
