@@ -13,7 +13,7 @@ include {
 
 include {
     STAGING as SummaryDatasets;
-    } from "${params.importMap.subworkflows}/leaves/datasets/summary/STAGING_Datasets_Summary.nf"
+    } from "${params.importMap.subworkflows}/leaves/datasets/summary/genome/STAGING_Datasets_Summary.nf"
 
 ////LEAF_IMPORT////
 

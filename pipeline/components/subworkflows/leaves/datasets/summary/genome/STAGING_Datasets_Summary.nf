@@ -10,7 +10,7 @@ include {
 
 include { 
     MODULE as Run;
-    } from "${params.importMap.subworkflows}/leaves/datasets/summary/MODULE_Datasets_Summary.nf"
+    } from "${params.importMap.subworkflows}/leaves/datasets/summary/genome/MODULE_Datasets_Summary.nf"
 
 workflow STAGING {
 
