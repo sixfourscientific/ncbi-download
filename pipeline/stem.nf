@@ -42,6 +42,10 @@ include {
     SUBWORKFLOW as Taxonomy;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Taxonomy"
 
+include {
+    SUBWORKFLOW as Search;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Search"
+
 ////BRANCH_IMPORT////
 
 
@@ -59,6 +63,8 @@ EXECUTE  = params.execute.split(',')
 RUN_ALL  = EXECUTE.contains('all')
 
 // RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
+
+RUN_SEARCH = RUN_ALL ?: EXECUTE.contains('search')
 
 ////BRANCH_FILTER////
 
@@ -108,6 +114,8 @@ workflow {
 
         Taxonomy( Parameters, TAXONOMY ) // | filter { RUN_TAXONOMY }  )
 
+        Search( Parameters, Inputs | filter { RUN_SEARCH }  )
+
         ////BRANCH_RUN////
 
     /*
@@ -133,6 +141,14 @@ workflow {
                 datasets: "${workflow.outputDir}/$datasetsSubdir",
                 taxonomy: "${workflow.outputDir}/$taxonomySubdir",
                 ]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+        Search = Search.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
             
@@ -164,6 +180,20 @@ output {
             ignoreErrors false
             index {
                 path   'bridge-main.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
+        Search { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "search/$indexMeta.run" }
+            index {
+                path   'bridge-search.csv'
                 header true
                 sep    '\t'
                 }
