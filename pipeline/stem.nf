@@ -47,6 +47,9 @@ include {
 
 // SETUP
 
+taxonomySubdir = 'taxonomy'
+datasetsSubdir = 'datasets'
+
 parseSupplementary( params.supplementary, params )
 
 Parameters = params
@@ -107,16 +110,29 @@ workflow {
 
         ////BRANCH_RUN////
 
-
     /*
     */
 
 
     publish: 
     
-        Taxonomy = Taxonomy.out.Main.map{ coreMeta -> 
-        
-            def indexMeta = [:]
+        Files = Taxonomy.out.Main.map{ coreMeta -> 
+
+            def indexMeta = [
+                taxonomy: coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
+                ]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+
+        Index = Taxonomy.out.Main.map{ coreMeta -> 
+
+            def indexMeta = [
+                datasets: "${workflow.outputDir}/$datasetsSubdir",
+                taxonomy: "${workflow.outputDir}/$taxonomySubdir",
+                ]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
             
@@ -129,15 +145,25 @@ workflow {
 
 output {
 
-        Taxonomy { 
-            enabled      false
+        // publish files without index (would be recorded as list)
+        Files { 
+            enabled      true
             mode         'copy'
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "taxonomy/$indexMeta.run" }
+                indexMeta.taxonomy >> "$taxonomySubdir/" 
+                }
+            }
+
+        // publish index without files (recorded as single directory)
+        Index { 
+            enabled      true
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
             index {
-                path   'bridge-taxonomy.csv'
+                path   'bridge-main.csv'
                 header true
                 sep    '\t'
                 }
