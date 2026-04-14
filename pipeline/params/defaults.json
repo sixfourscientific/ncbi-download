@@ -34,5 +34,25 @@
         }
       }
     }
+  },
+  "DATASETS": {
+    "SUMMARY": {
+      "SEARCH": {
+        "CONFIG": {
+          "VERSION": [],
+          "LABEL": {
+            "INCLUDE": true,
+            "SOFTWARE": null,
+            "PRE": null,
+            "POST": null,
+            "ALIASES": {}
+          },
+          "ARGS": {
+            "CORE": {},
+            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Summary_Search.tsv"
+          }
+        }
+      }
+    }
   }
 }
