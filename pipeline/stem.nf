@@ -54,6 +54,10 @@ include {
     SUBWORKFLOW as Format;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Format"
 
+include {
+    SUBWORKFLOW as Split;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Split"
+
 ////BRANCH_IMPORT////
 
 
@@ -77,6 +81,8 @@ RUN_SEARCH = RUN_ALL ?: EXECUTE.contains('search')
 RUN_COUNT = RUN_ALL ?: EXECUTE.contains('count')
 
 RUN_FORMAT = RUN_ALL ?: EXECUTE.contains('format')
+
+RUN_SPLIT = RUN_ALL ?: EXECUTE.contains('split')
 
 ////BRANCH_FILTER////
 
@@ -147,6 +153,8 @@ workflow {
 
         Format( Parameters, Count.out.Main | filter { coreMeta -> coreMeta.AVAILABLE }  )
 
+        Split( Parameters, Inputs | filter { RUN_SPLIT }  )
+
         ////BRANCH_RUN////
 
     /*
@@ -194,6 +202,14 @@ workflow {
             return indexMetaNew }
 
         Format = Format.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+        Split = Split.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
             
@@ -269,6 +285,20 @@ output {
                 return "format/$indexMeta.run" }
             index {
                 path   'bridge-format.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
+        Split { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "split/$indexMeta.run" }
+            index {
+                path   'bridge-split.csv'
                 header true
                 sep    '\t'
                 }
