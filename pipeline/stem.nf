@@ -137,7 +137,7 @@ workflow {
 
         Search( Parameters, Inputs | filter { RUN_SEARCH }  )
 
-        Count( Parameters, Inputs | filter { RUN_COUNT }  )
+        Count( Parameters, Search.out.Main ) // | filter { RUN_COUNT }  )
 
         ////BRANCH_RUN////
 
