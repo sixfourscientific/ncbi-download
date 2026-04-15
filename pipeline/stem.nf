@@ -80,10 +80,23 @@ workflow {
         def InputMeta = params.INPUT.SAMPLES + [
             INFO     : params.samples,
             INFO_ID  : "SAMPLES",
-            DETAILED : true,
             ]
 
         Inputs = ParseInfo( InputMeta )
+            
+            | map { coreMeta ->
+
+                def (entry) = coreMeta.entrySet()
+                
+                def runTag = entry.value.toString().replaceAll( "\\s", "_" )
+                
+                def coreMetaNew = [
+                    RUN  : runTag,
+                    id   : entry.value,
+                    type : entry.key,
+                    ]
+
+                return coreMetaNew }
 
         // SUPPLEMENTARY
 
@@ -93,14 +106,16 @@ workflow {
             ]
 
         TAXONOMY = ParseInfo( TaxonomyMeta ) 
-            
+
+            | filter{ coreMeta -> coreMeta }
+        
             // create custom run tag from parsed url
             | map { coreMeta ->
-                
-                def urlTag = getUrlTag(coreMeta['url'])
+
+                def runTag = getUrlTag(coreMeta['url'])
 
                 def coreMetaNew = coreMeta + [
-                    RUN : urlTag,
+                    RUN : runTag,
                     ]
 
                 return coreMetaNew }

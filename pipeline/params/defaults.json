@@ -41,14 +41,23 @@
         "CONFIG": {
           "VERSION": [],
           "LABEL": {
-            "INCLUDE": true,
+            "INCLUDE": false,
             "SOFTWARE": null,
             "PRE": null,
             "POST": null,
             "ALIASES": {}
           },
           "ARGS": {
-            "CORE": {},
+            "CORE": {
+              "--annotated"        : false,
+              "--as-json-lines"    : true,
+              "--assembly-level"   : "complete,chromosome,scaffold",
+              "--assembly-source"  : "refseq",
+              "--exclude-atypical" : true,
+              "--limit"            : "all",
+              "--mag"              : "exclude",
+              "--reference"        : true
+              },
             "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Summary_Search.tsv"
           }
         }
