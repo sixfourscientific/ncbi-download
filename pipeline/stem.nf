@@ -145,7 +145,7 @@ workflow {
 
         Count( Parameters, Search.out.Main ) // | filter { RUN_COUNT }  )
 
-        Format( Parameters, Inputs | filter { RUN_FORMAT }  )
+        Format( Parameters, Count.out.Main | filter { coreMeta -> coreMeta.AVAILABLE }  )
 
         ////BRANCH_RUN////
 

@@ -46,7 +46,7 @@ workflow STAGING {
 
                     return [
                         coreMeta,
-                        coreMeta.path,
+                        coreMeta.OUTPUTS.DATASETS.SUMMARY.SEARCH.main,
                         optionalFile,
                         coreMeta.STAGING.ARGS,
                         ] }
