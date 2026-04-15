@@ -46,6 +46,10 @@ include {
     SUBWORKFLOW as Search;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Search"
 
+include {
+    SUBWORKFLOW as Count;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Count"
+
 ////BRANCH_IMPORT////
 
 
@@ -65,6 +69,8 @@ RUN_ALL  = EXECUTE.contains('all')
 // RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
 
 RUN_SEARCH = RUN_ALL ?: EXECUTE.contains('search')
+
+RUN_COUNT = RUN_ALL ?: EXECUTE.contains('count')
 
 ////BRANCH_FILTER////
 
@@ -131,6 +137,8 @@ workflow {
 
         Search( Parameters, Inputs | filter { RUN_SEARCH }  )
 
+        Count( Parameters, Inputs | filter { RUN_COUNT }  )
+
         ////BRANCH_RUN////
 
     /*
@@ -162,6 +170,14 @@ workflow {
             return indexMetaNew }
 
         Search = Search.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+        Count = Count.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
             
@@ -209,6 +225,20 @@ output {
                 return "search/$indexMeta.run" }
             index {
                 path   'bridge-search.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
+        Count { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "count/$indexMeta.run" }
+            index {
+                path   'bridge-count.csv'
                 header true
                 sep    '\t'
                 }
