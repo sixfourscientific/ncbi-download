@@ -163,7 +163,7 @@ workflow {
 
         // Filter via report info?
 
-        Examine( Parameters, Inputs | filter { RUN_EXAMINE }  )
+        Examine( Parameters, Split.out.Main ) // | filter { RUN_EXAMINE }  )
 
         ////BRANCH_RUN////
 
