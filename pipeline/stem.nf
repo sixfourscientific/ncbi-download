@@ -153,7 +153,9 @@ workflow {
 
         Format( Parameters, Count.out.Main | filter { coreMeta -> coreMeta.AVAILABLE }  )
 
-        Split( Parameters, Inputs | filter { RUN_SPLIT }  )
+        Split( Parameters, Format.out.Main ) // | filter { RUN_SPLIT }  )
+
+        // Filter via report info?
 
         ////BRANCH_RUN////
 

@@ -39,7 +39,7 @@
         "CONFIG": {
           "VERSION": [],
           "LABEL": {
-            "INCLUDE": true,
+            "INCLUDE": false,
             "SOFTWARE": null,
             "PRE": null,
             "POST": null,
