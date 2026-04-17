@@ -56,10 +56,11 @@ workflow SUBWORKFLOW {
 
                     // store record number & report info
                     def splitMeta = coreMeta + [
-                        RUN       : runTagNew,
-                        record    : idxTag,
-                     // report    : entry,
-                        report    : [ accession : entry.accession ], // simplified report info for testing
+                        RUN     : runTagNew,
+                        record  : idxTag,
+                     // report  : entry,
+                        report  : [ accession : entry.accession ], // simplified report info for testing
+                        OUTPUTS : null,
                         ]
 
                     return splitMeta }

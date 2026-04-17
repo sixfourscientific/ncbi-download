@@ -417,3 +417,127 @@ def parseConfig( args ){
     def Parsed = configList
 
     return Parsed }
+
+
+def parseSubsets( args ){
+
+    def parsedMap = args.grouped
+
+    // specify config defaults
+    def defaultMap = initDefaults( "$workflow.projectDir/components/defaults/ENTRY_SUBSET.json" )
+
+    // initialise empty config map
+    def subsetMap = [:]
+
+    // combine parsed & default maps
+    initMap( subsetMap, parsedMap, defaultMap )
+
+    // subsetMap from now on
+    assert  (subsetMap.BYTELIMIT || subsetMap.BATCHSIZE): "Neither Byte nor File size limits were specified"
+    assert !(subsetMap.BYTELIMIT && subsetMap.BATCHSIZE): "Both Byte & File size limits were specified"
+
+    def groupedList = subsetMap.GROUPED
+    
+        .withIndex()
+        
+        .collect{ element, idx ->
+
+            // calculate file sizes
+            def fileBytes = subsetMap.BYTELIMIT
+                ? java.nio.file.Files.size(entry).toLong()
+                : 0
+            
+            def elementMeta = [
+                element : element,
+                bytes   : fileBytes,
+                ]
+
+            return elementMeta }
+        
+        // sort files; smallest -> largest
+     // .sort{ first, second -> first[0] <=> second[0] }
+
+
+    // PARTITION ELEMENTS
+
+    // create store
+    def batchMap = [:]
+
+    // subset counters
+    def batchBytes = 0
+    def batchFiles = 0
+    def elementCount = 0
+    def batchCount = 0
+
+    groupedList
+
+        // cycle entries...
+        .each{ elementMeta ->
+
+            def element   = elementMeta.element
+            def fileBytes = elementMeta.bytes
+
+            elementCount += 1
+
+            // record expected batch size
+            def cumulativeBytes = batchBytes + fileBytes
+            def cumulativeFiles = batchFiles + 1
+
+            // assess batch size
+            if (// initial file 
+                elementCount == 1 || 
+                // cumulative batch bytes exceeds byte limit (bytes limit only)
+                ( subsetMap.BYTELIMIT && cumulativeBytes > subsetMap.BYTELIMIT) ||
+                // cumulative batch files exceeds file limit (files limit only)
+                ( subsetMap.BATCHSIZE && cumulativeFiles > subsetMap.BATCHSIZE) ||
+                // cumulative batch files exceeds max files  (bytes limit only)
+                ( subsetMap.BYTELIMIT && cumulativeFiles > subsetMap.BATCHMAX ) ){
+
+                // start new batch &/or reset
+                batchCount += 1
+                batchBytes  = 0
+                batchFiles  = 0 }
+
+            // record batch size increase
+            batchBytes += fileBytes
+            batchFiles += 1
+
+            // create list under relevant batch as required
+            batchMap.containsKey(batchCount) ?: batchMap.putAt( batchCount, [] )
+
+            // store file under relevant batch
+            batchMap[batchCount].add(element) }
+
+    def elementInfo  = "${elementCount} element${elementCount > 1 ? 's' : ''}"
+    def batchInfo    = "${batchCount} batch${batchCount > 1 ? 'es' : ''}"
+    println "\nINFO ~ Subsets (${subsetMap.NAME}); partitioned ${elementInfo} into ${batchInfo}.\n"
+
+
+    // PACKAGE BATCHES
+
+    def subsetMetaList = batchMap
+
+        .collect{ batchIdx, batchList ->
+
+            def idMeta = [
+                'NAME'  : subsetMap.NAME,
+                'INDEX' : batchIdx,
+                ]
+
+            def subsetMeta = [ 
+                SUBSET  : idMeta,
+                GROUPED : batchList,
+                ]
+
+            if ( subsetMap.VERBOSE ){
+
+                // display batch info
+                println "\nbatch ${batchIdx} (${batchList.size()} element${batchList.size() > 1 ? 's' : ''}):"
+
+                batchList.each{ element -> println " - ${element}" }; println('') }
+
+            return subsetMeta }
+
+    def Subsets = subsetMetaList
+
+    return Subsets }

@@ -38,6 +38,10 @@ include {
     Info_Parse as ParseInfo;
     } from "${params.importMap.subworkflows}/core/Info_Parse"
 
+include { 
+    Subsets_Parse as ParseSubsets;
+    } from "${params.importMap.subworkflows}/core/Subsets_Parse"
+
 include {
     SUBWORKFLOW as Taxonomy;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Taxonomy"
@@ -143,6 +147,13 @@ workflow {
                     ]
 
                 return coreMetaNew }
+                
+        // SUBSETS
+
+        def SubsetMeta = params.SUBSET ?: [:] + [
+            NAME      : 'downloads',
+            BATCHSIZE : 3,
+            ]
 
 
         // BRANCHES
@@ -164,6 +175,28 @@ workflow {
         // Filter via report info?
 
         Examine( Parameters, Split.out.Main ) // | filter { RUN_EXAMINE }  )
+
+        Grouped = Examine.out.Main
+
+            // sort by (i) queryID & (ii) accession
+            | toSortedList{ coreMeta1, coreMeta2 ->  
+
+                // smallest -> largest
+                coreMeta1.id               <=> coreMeta2.id
+                ?:
+                // smallest -> largest
+                coreMeta1.report.accession <=> coreMeta2.report.accession }
+
+            // stage for subsetting
+            | map{ coreMetaList ->
+
+                def groupMeta = SubsetMeta + [
+                    GROUPED  : coreMetaList,
+                    ]
+
+                return groupMeta }
+
+        ParseSubsets( Parameters, Grouped )
 
         ////BRANCH_RUN////
 
