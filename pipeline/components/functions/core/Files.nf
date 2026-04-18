@@ -522,6 +522,7 @@ def parseSubsets( args ){
             def idMeta = [
                 'NAME'  : subsetMap.NAME,
                 'INDEX' : batchIdx,
+                'FILE'  : "${subsetMap.NAME}-batch${batchIfx}.tsv",
                 ]
 
             def subsetMeta = [ 
