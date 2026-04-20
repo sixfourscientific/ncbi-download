@@ -568,6 +568,18 @@ def groupOutputs( coreMeta, outputMeta, groupKey ){
 
 
 
+def flattenMeta( Map coreMeta ) {
+
+    def mapFlat = coreMeta
+        .collectEntries { key, value ->
+            value !instanceof Map 
+                ? [ (key) : value ]
+                : flattenMeta(value).collectEntries{ subKey, subValue -> [ ("${key}_${subKey}"): subValue ] }
+            }
+    return mapFlat }
+
+
+
 def formatBasepairs (value) {
 
     // default

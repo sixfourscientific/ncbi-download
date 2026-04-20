@@ -422,6 +422,7 @@ def parseConfig( args ){
 def parseSubsets( args ){
 
     def parsedMap = args.grouped
+    def keepHeader = args.keepHeader
 
     // specify config defaults
     def defaultMap = initDefaults( "$workflow.projectDir/components/defaults/ENTRY_SUBSET.json" )
@@ -520,9 +521,10 @@ def parseSubsets( args ){
         .collect{ batchIdx, batchList ->
 
             def idMeta = [
-                'NAME'  : subsetMap.NAME,
-                'INDEX' : batchIdx,
-                'FILE'  : "${subsetMap.NAME}-batch${batchIfx}.tsv",
+                NAME  : subsetMap.NAME,
+                INDEX : batchIdx,
+                FILE  : "${subsetMap.NAME}-batch${batchIdx}.tsv",
+                HEADER: keepHeader, 
                 ]
 
             def subsetMeta = [ 
