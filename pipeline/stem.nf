@@ -66,6 +66,10 @@ include {
     SUBWORKFLOW as Examine;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Examine"
 
+include {
+    SUBWORKFLOW as Fetch;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Fetch"
+
 ////BRANCH_IMPORT////
 
 
@@ -93,6 +97,8 @@ RUN_FORMAT = RUN_ALL ?: EXECUTE.contains('format')
 RUN_SPLIT = RUN_ALL ?: EXECUTE.contains('split')
 
 RUN_EXAMINE = RUN_ALL ?: EXECUTE.contains('examine')
+
+RUN_FETCH = RUN_ALL ?: EXECUTE.contains('fetch')
 
 ////BRANCH_FILTER////
 
@@ -201,6 +207,8 @@ workflow {
 
         ParseSubsets( Parameters, Grouped )
 
+        Fetch( Parameters, Inputs | filter { RUN_FETCH }  )
+
         ////BRANCH_RUN////
 
     /*
@@ -264,6 +272,14 @@ workflow {
             return indexMetaNew }
 
         Examine = Examine.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+        Fetch = Fetch.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
             
@@ -367,6 +383,20 @@ output {
                 return "examine/$indexMeta.run" }
             index {
                 path   'bridge-examine.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
+        Fetch { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "fetch/$indexMeta.run" }
+            index {
+                path   'bridge-fetch.csv'
                 header true
                 sep    '\t'
                 }
