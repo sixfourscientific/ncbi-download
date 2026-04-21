@@ -150,9 +150,11 @@ workflow {
                 
         // SUBSETS
 
-        def SubsetMeta = params.SUBSET ?: [:] + [
+        def BatchMeta = params.BATCH ?: [:] + [
             NAME      : 'downloads',
             BATCHSIZE : 3,
+            TARGETS   : [['id'],['report','accession']],
+            HEADER    : false,
             ]
 
 
@@ -190,7 +192,8 @@ workflow {
             // stage for subsetting
             | map{ coreMetaList ->
 
-                def groupMeta = SubsetMeta + [
+                def groupMeta = [
+                    BATCH    : BatchMeta,
                     GROUPED  : coreMetaList,
                     ]
 

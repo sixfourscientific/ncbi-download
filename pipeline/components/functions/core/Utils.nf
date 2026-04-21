@@ -568,15 +568,62 @@ def groupOutputs( coreMeta, outputMeta, groupKey ){
 
 
 
-def flattenMeta( Map coreMeta ) {
+def flattenMap( mapObj ) {
 
-    def mapFlat = coreMeta
-        .collectEntries { key, value ->
-            value !instanceof Map 
-                ? [ (key) : value ]
-                : flattenMeta(value).collectEntries{ subKey, subValue -> [ ("${key}_${subKey}"): subValue ] }
+    def flatMap = mapObj.collectEntries { key, value ->
+
+        value instanceof Map 
+            // recurse if nested submap
+            ? flattenMap(value).collectEntries{ subKey, subValue -> [ ("${key}_${subKey}"): subValue ] }
+            // return flattened submap path
+            : [ (key) : value ]
+        }
+
+    return flatMap }
+
+
+
+def getSubMap( mapObj, pathList ){
+
+    def subMap = [:]
+
+    // validate nested structure
+    pathList.each { subPath ->
+
+        def targetValue = subPath.inject(mapObj) { accumulator, key ->
+
+            // Check submap parent available within layer (will fail anyway e.g. cannot get property 'KEY' on null object)
+            if (accumulator == null) {
+                throw new Exception("Subpath not found; nested parent missing for key \"$key\"") }
+
+            // 2. Check if the specific key exists in the current container
+            if (!(accumulator instanceof Map) || !accumulator.containsKey(key)) {
+                throw new Exception("Subpath not found; key \"$key\" missing in nested parent (${accumulator instanceof Map ? accumulator.keySet() : 'not a map'})") }
+            
+            return accumulator."$key" }
+
+        // store within submap
+        def current = subMap
+
+        subPath.eachWithIndex { key, idx ->
+
+            // create nested path (as required)
+            if (idx != subPath.size() - 1) {
+
+                current[key] = current[key] ?: [:]
+
+                current = current[key] }
+
+            // store leaf
+            else {
+
+                current[key] = targetValue } 
+            
             }
-    return mapFlat }
+
+        }
+
+    return subMap }
 
 
 

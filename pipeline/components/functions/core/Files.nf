@@ -419,32 +419,33 @@ def parseConfig( args ){
     return Parsed }
 
 
+
 def parseSubsets( args ){
 
-    def parsedMap = args.grouped
-    def keepHeader = args.keepHeader
+    def parsedMap = args.batch
+    def groupList = args.grouped
 
     // specify config defaults
-    def defaultMap = initDefaults( "$workflow.projectDir/components/defaults/ENTRY_SUBSET.json" )
+    def defaultMap = initDefaults( "$workflow.projectDir/components/defaults/ENTRY_BATCH.json" )
 
     // initialise empty config map
-    def subsetMap = [:]
+    def batchMap = [:]
 
     // combine parsed & default maps
-    initMap( subsetMap, parsedMap, defaultMap )
+    initMap( batchMap, parsedMap, defaultMap )
 
-    // subsetMap from now on
-    assert  (subsetMap.BYTELIMIT || subsetMap.BATCHSIZE): "Neither Byte nor File size limits were specified"
-    assert !(subsetMap.BYTELIMIT && subsetMap.BATCHSIZE): "Both Byte & File size limits were specified"
+    // batchMap from now on
+    assert  (batchMap.BYTELIMIT || batchMap.BATCHSIZE): "Neither Byte nor File size limits were specified"
+    assert !(batchMap.BYTELIMIT && batchMap.BATCHSIZE): "Both Byte & File size limits were specified"
 
-    def groupedList = subsetMap.GROUPED
+    def examinedList = groupList
     
         .withIndex()
         
         .collect{ element, idx ->
 
             // calculate file sizes
-            def fileBytes = subsetMap.BYTELIMIT
+            def fileBytes = batchMap.BYTELIMIT
                 ? java.nio.file.Files.size(entry).toLong()
                 : 0
             
@@ -462,7 +463,7 @@ def parseSubsets( args ){
     // PARTITION ELEMENTS
 
     // create store
-    def batchMap = [:]
+    def subsetMap = [:]
 
     // subset counters
     def batchBytes = 0
@@ -470,7 +471,7 @@ def parseSubsets( args ){
     def elementCount = 0
     def batchCount = 0
 
-    groupedList
+    examinedList
 
         // cycle entries...
         .each{ elementMeta ->
@@ -488,11 +489,11 @@ def parseSubsets( args ){
             if (// initial file 
                 elementCount == 1 || 
                 // cumulative batch bytes exceeds byte limit (bytes limit only)
-                ( subsetMap.BYTELIMIT && cumulativeBytes > subsetMap.BYTELIMIT) ||
+                ( batchMap.BYTELIMIT && cumulativeBytes > batchMap.BYTELIMIT) ||
                 // cumulative batch files exceeds file limit (files limit only)
-                ( subsetMap.BATCHSIZE && cumulativeFiles > subsetMap.BATCHSIZE) ||
+                ( batchMap.BATCHSIZE && cumulativeFiles > batchMap.BATCHSIZE) ||
                 // cumulative batch files exceeds max files  (bytes limit only)
-                ( subsetMap.BYTELIMIT && cumulativeFiles > subsetMap.BATCHMAX ) ){
+                ( batchMap.BYTELIMIT && cumulativeFiles > batchMap.BATCHMAX ) ){
 
                 // start new batch &/or reset
                 batchCount += 1
@@ -504,40 +505,38 @@ def parseSubsets( args ){
             batchFiles += 1
 
             // create list under relevant batch as required
-            batchMap.containsKey(batchCount) ?: batchMap.putAt( batchCount, [] )
+            subsetMap.containsKey(batchCount) ?: subsetMap.putAt( batchCount, [] )
 
             // store file under relevant batch
-            batchMap[batchCount].add(element) }
+            subsetMap[batchCount].add(element) }
 
     def elementInfo  = "${elementCount} element${elementCount > 1 ? 's' : ''}"
     def batchInfo    = "${batchCount} batch${batchCount > 1 ? 'es' : ''}"
-    println "\nINFO ~ Subsets (${subsetMap.NAME}); partitioned ${elementInfo} into ${batchInfo}.\n"
+    println "\nINFO ~ Subsets (${batchMap.NAME}); partitioned ${elementInfo} into ${batchInfo}.\n"
 
 
     // PACKAGE BATCHES
 
-    def subsetMetaList = batchMap
+    def subsetMetaList = subsetMap
 
-        .collect{ batchIdx, batchList ->
+        .collect{ batchIdx, subsetList ->
 
-            def idMeta = [
-                NAME  : subsetMap.NAME,
+            def batchMapNew = batchMap + [
                 INDEX : batchIdx,
-                FILE  : "${subsetMap.NAME}-batch${batchIdx}.tsv",
-                HEADER: keepHeader, 
+                FILE  : "${batchMap.NAME}-batch${batchIdx}.tsv",
                 ]
 
             def subsetMeta = [ 
-                SUBSET  : idMeta,
-                GROUPED : batchList,
+                BATCH  : batchMapNew,
+                GROUPED : subsetList,
                 ]
 
-            if ( subsetMap.VERBOSE ){
+            if ( batchMap.VERBOSE ){
 
                 // display batch info
-                println "\nbatch ${batchIdx} (${batchList.size()} element${batchList.size() > 1 ? 's' : ''}):"
+                println "\nbatch ${batchIdx} (${subsetList.size()} element${subsetList.size() > 1 ? 's' : ''}):"
 
-                batchList.each{ element -> println " - ${element}" }; println('') }
+                subsetList.each{ element -> println " - ${element}" }; println('') }
 
             return subsetMeta }
 

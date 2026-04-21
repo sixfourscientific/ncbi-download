@@ -7,7 +7,8 @@ include {
 
 
 include { 
-    flattenMeta as flattenMeta;
+    getSubMap as getSubMap;
+    flattenMap as flattenMap;
     } from "$params.importMap.functions/core/Utils"
 
 
@@ -26,8 +27,8 @@ workflow Subsets_Parse {
             | flatMap { groupMeta ->
 
                 def subsetList = parseSubsets( 
-                    grouped    : groupMeta,
-                    keepHeader : false,
+                    batch   : groupMeta.BATCH,
+                    grouped : groupMeta.GROUPED,
                     )
             
                 return subsetList }
@@ -38,32 +39,41 @@ workflow Subsets_Parse {
         Subsets
 
             | collectFile(
-                newLine : true,
-                    ){ coreMeta ->
+                newLine : true,                
+                ){ subsetMeta ->
 
-                    def fileName = coreMeta.SUBSET.FILE
+                    def fileName = subsetMeta.BATCH.FILE
 
-                    def text = coreMeta.GROUPED
+                    def nestList = subsetMeta.BATCH.TARGETS
 
-                            .withIndex()
+                    def text = subsetMeta.GROUPED
 
-                            .collect{ entry, idx ->
+                        .withIndex()
 
-                                def entryFlat = flattenMeta(entry)
+                        .collect{ elementMeta, idx ->
 
-                                def keys = entryFlat
-                                    .keySet()
-                                    .join('\t')
+                            // extract submap as required
+                            def relevantMeta = nestList
+                                ? getSubMap(elementMeta, nestList)
+                                : elementMeta
 
-                                def values = entryFlat
-                                    .values()
-                                    .join('\t')
+                            // flatten nested map structure
+                            def flatMeta = flattenMap(relevantMeta)
 
-                                def lines = ( coreMeta.SUBSET.HEADER && idx.equals(0) )
-                                    ? "$keys\nt$values"
-                                    : values
+                            def keys = flatMeta
+                                .keySet()
+                                .join('\t')
 
-                                return lines }
+                            def values = flatMeta
+                                .values()
+                                .join('\t')
+
+                            // return header (keys) as required
+                            def lines = ( subsetMeta.BATCH.HEADER && idx.equals(0) )
+                                ? "$keys\n$values"
+                                : values
+
+                            return lines }
 
                             .join('\n')
 
@@ -78,8 +88,9 @@ workflow Subsets_Parse {
         
                 | map { obj ->
                 
+                    // check if meta or file
                     def groupID = obj instanceof Map
-                        ? obj.SUBSET.FILE
+                        ? obj.BATCH.FILE
                         : file(obj).getName() 
 
                     return [
@@ -97,21 +108,23 @@ workflow Subsets_Parse {
 
                     assert nonMetaList.size() == 1, 'Multiple batches regrouped'
 
-                    def (coreMeta) = metaList
+                    def (subsetMeta) = metaList
 
                     def (filePath) = nonMetaList
 
-                    def subsetMeta = coreMeta.SUBSET + [
+                    def batchMeta = subsetMeta.BATCH + [
                         FILE: filePath,
                         ]
 
-                    def coreMetaNew = coreMeta + [
-                        SUBSET : subsetMeta,
+                    def subsetMetaNew = subsetMeta + [
+                        BATCH : batchMeta,
                         ]
 
-                    return coreMetaNew }
+                    return subsetMetaNew }
         
         | set { Processed }
+
+
 
     emit:
 
