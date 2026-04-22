@@ -60,11 +60,23 @@ workflow SUBWORKFLOW {
 
                         def accession = coreMeta.report.accession
 
+                        // sort IDs mapped to Accessions
+                        // N.B. will prioritise more specific taxon names (i.e. species > genus)  but taxid will be unpredictable
+                        def mappedList = accessionMap[accession]
+                            .sort{ label1, label2 -> label2 <=> label1 }
+
+                        // identify first id mapped to accession
+                        def idFirst = mappedList.first()
+
+                        // check id mapped order
+                        def mappedPriority = idFirst.equals(coreMeta.id)
+
                         // count accession mappings to identify duplicated
-                        def mappedCount = accessionMap[accession].size()
-                
+                        def mappedCount = mappedList.size()
+
                         def coreMetaNew = coreMeta + [
-                            mapped : mappedCount,
+                            mapped   : mappedCount,
+                            PRIORITY : mappedPriority, 
                             ]
 
                         return coreMetaNew }

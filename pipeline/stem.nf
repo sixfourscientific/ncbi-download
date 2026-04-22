@@ -161,6 +161,7 @@ workflow {
             BATCHSIZE : 3,
             TARGETS   : [['id'],['report','accession']],
             HEADER    : false,
+            VERBOSE : true,
             ]
 
 
@@ -178,23 +179,23 @@ workflow {
 
         // examine report availability
         Count( Parameters, Search.out.Main )
-        
+
         // reformat json/jsonl as tsv
         Format( Parameters, Count.out.Main | filter { coreMeta -> coreMeta.AVAILABLE }  )
 
         // seperate individual reports
         Split( Parameters, Format.out.Main )
 
-        // Filter using report info?
-
         // examine accessions mapped to query IDs 
         Examine( Parameters, Split.out.Main )
 
+        // Filter using report info?
+
         // group accessions
         Grouped = Examine.out.Main
-
+            
             // sort by (i) queryID & (ii) accession
-            | toSortedList{ coreMeta1, coreMeta2 ->  
+            | toSortedList { coreMeta1, coreMeta2 ->  
 
                 // smallest -> largest
                 coreMeta1.id               <=> coreMeta2.id
@@ -203,7 +204,7 @@ workflow {
                 coreMeta1.report.accession <=> coreMeta2.report.accession }
 
             // stage for subsetting
-            | map{ coreMetaList ->
+            | map { coreMetaList ->
 
                 def groupMeta = [
                     BATCH    : BatchMeta,
