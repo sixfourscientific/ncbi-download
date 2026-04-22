@@ -167,7 +167,7 @@ workflow {
             BATCHSIZE : 3,
             TARGETS   : [['id'],['report','accession']],
             HEADER    : false,
-            VERBOSE : true,
+            VERBOSE   : false,
             ]
 
 
