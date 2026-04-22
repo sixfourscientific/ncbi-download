@@ -61,7 +61,7 @@ workflow SUBWORKFLOW {
                         def accession = coreMeta.report.accession
 
                         // sort IDs mapped to Accessions
-                        // N.B. will prioritise more specific taxon names (i.e. species > genus)  but taxid will be unpredictable
+                        // N.B. will prioritise more specific taxon names (i.e. species > genus) but taxid will be unpredictable
                         def mappedList = accessionMap[accession]
                             .sort{ label1, label2 -> label2 <=> label1 }
 
