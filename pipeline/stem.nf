@@ -70,6 +70,10 @@ include {
     SUBWORKFLOW as Fetch;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Fetch"
 
+include {
+    SUBWORKFLOW as Filter;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Filter"
+
 ////BRANCH_IMPORT////
 
 
@@ -99,6 +103,8 @@ RUN_SPLIT = RUN_ALL ?: EXECUTE.contains('split')
 RUN_EXAMINE = RUN_ALL ?: EXECUTE.contains('examine')
 
 RUN_FETCH = RUN_ALL ?: EXECUTE.contains('fetch')
+
+RUN_FILTER = RUN_ALL ?: EXECUTE.contains('filter')
 
 ////BRANCH_FILTER////
 
@@ -189,8 +195,6 @@ workflow {
         // examine accessions mapped to query IDs 
         Examine( Parameters, Split.out.Main )
 
-        // Filter using report info?
-
         // group accessions
         Grouped = Examine.out.Main
             
@@ -218,6 +222,8 @@ workflow {
 
         // download datasets
         Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
+
+        Filter( Parameters, Inputs | filter { RUN_FILTER }  )
 
         ////BRANCH_RUN////
 
@@ -290,6 +296,14 @@ workflow {
             return indexMetaNew }
 
         Fetch = Fetch.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+        Filter = Filter.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
             
@@ -407,6 +421,20 @@ output {
                 return "fetch/$indexMeta.run" }
             index {
                 path   'bridge-fetch.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
+        Filter { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "filter/$indexMeta.run" }
+            index {
+                path   'bridge-filter.csv'
                 header true
                 sep    '\t'
                 }
