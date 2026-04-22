@@ -195,8 +195,11 @@ workflow {
         // examine accessions mapped to query IDs 
         Examine( Parameters, Split.out.Main )
 
+        // filter accessions according to criteria
+        Filter( Parameters, Examine.out.Main )
+
         // group accessions
-        Grouped = Examine.out.Main
+        Grouped = Filter.out.Main
             
             // sort by (i) queryID & (ii) accession
             | toSortedList { coreMeta1, coreMeta2 ->  
@@ -222,8 +225,6 @@ workflow {
 
         // download datasets
         Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
-
-        Filter( Parameters, Inputs | filter { RUN_FILTER }  )
 
         ////BRANCH_RUN////
 

@@ -28,6 +28,14 @@ workflow SUBWORKFLOW {
 
         ////LEAF_START////
 
+        Inputs
+        
+            // retain prioritised accessions (if duplicated via taxon)
+            | filter { coreMeta -> coreMeta.PRIORITY }
+
+            // remove duplicate accessions (if duplicated via taxon or accession)
+            | unique { coreMeta -> coreMeta.report.accession }            
+
         ////LEAF_PARSE_RUN////
 
         | set { Processed }
