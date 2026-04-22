@@ -1,5 +1,5 @@
 {
-  "DEBUG": true,
+  "DEBUG": false,
   "PUBLISH": false,
   "INPUT": {
     "SAMPLES": {
@@ -86,14 +86,17 @@
         "CONFIG": {
           "VERSION": [],
           "LABEL": {
-            "INCLUDE": true,
+            "INCLUDE": false,
             "SOFTWARE": null,
             "PRE": null,
             "POST": null,
             "ALIASES": {}
           },
           "ARGS": {
-            "CORE": {},
+            "CORE": {
+              "--no-progressbar": true,
+              "--include": "genome,protein,gbff,seq-report"
+              },
             "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Download_Fetch.tsv"
           }
         }

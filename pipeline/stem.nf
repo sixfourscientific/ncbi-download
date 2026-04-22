@@ -172,7 +172,7 @@ workflow {
 
         Taxonomy( Parameters, TAXONOMY ) // | filter { RUN_TAXONOMY }  )
 
-        Search( Parameters, Inputs | filter { RUN_SEARCH }  )
+        Search( Parameters, Inputs | filter { RUN_SEARCH || RUN_FETCH }  )
 
         Count( Parameters, Search.out.Main ) // | filter { RUN_COUNT }  )
 
@@ -207,7 +207,7 @@ workflow {
 
         ParseSubsets( Parameters, Grouped )
 
-        Fetch( Parameters, Inputs | filter { RUN_FETCH }  )
+        Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
 
         ////BRANCH_RUN////
 

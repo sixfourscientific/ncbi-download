@@ -13,7 +13,7 @@ include {
 
 include {
     STAGING as DownloadDatasets;
-    } from "${params.importMap.subworkflows}/leaves/datasets/download/STAGING_Datasets_Download.nf"
+    } from "${params.importMap.subworkflows}/leaves/datasets/download/genome/batch/STAGING_Datasets_Download.nf"
 
 ////LEAF_IMPORT////
 

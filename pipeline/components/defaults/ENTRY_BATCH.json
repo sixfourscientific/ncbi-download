@@ -2,5 +2,5 @@
   "BYTELIMIT" : null,
   "BATCHSIZE" : 100,
   "BATCHMAX"  : 1000,
-  "VERBOSE"   : true
+  "VERBOSE"   : false
 }

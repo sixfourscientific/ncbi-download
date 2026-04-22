@@ -10,7 +10,7 @@ include {
 
 include { 
     MODULE as Run;
-    } from "${params.importMap.subworkflows}/leaves/datasets/download/MODULE_Datasets_Download.nf"
+    } from "${params.importMap.subworkflows}/leaves/datasets/download/genome/batch/MODULE_Datasets_Download.nf"
 
 workflow STAGING {
 
@@ -46,7 +46,7 @@ workflow STAGING {
 
                     return [
                         coreMeta,
-                        coreMeta.path,
+                        coreMeta.BATCH.FILE,
                         optionalFile,
                         coreMeta.STAGING.ARGS,
                         ] }
