@@ -170,20 +170,27 @@ workflow {
         
         // BRANCH( Inputs|BRANCH.out.Main)
 
-        Taxonomy( Parameters, TAXONOMY ) // | filter { RUN_TAXONOMY }  )
+        // obtain taxonomy files
+        Taxonomy( Parameters, TAXONOMY )
 
+        // obtain datasets summary
         Search( Parameters, Inputs | filter { RUN_SEARCH || RUN_FETCH }  )
 
-        Count( Parameters, Search.out.Main ) // | filter { RUN_COUNT }  )
-
+        // examine report availability
+        Count( Parameters, Search.out.Main )
+        
+        // reformat json/jsonl as tsv
         Format( Parameters, Count.out.Main | filter { coreMeta -> coreMeta.AVAILABLE }  )
 
-        Split( Parameters, Format.out.Main ) // | filter { RUN_SPLIT }  )
+        // seperate individual reports
+        Split( Parameters, Format.out.Main )
 
-        // Filter via report info?
+        // Filter using report info?
 
-        Examine( Parameters, Split.out.Main ) // | filter { RUN_EXAMINE }  )
+        // examine accessions mapped to query IDs 
+        Examine( Parameters, Split.out.Main )
 
+        // group accessions
         Grouped = Examine.out.Main
 
             // sort by (i) queryID & (ii) accession
@@ -205,8 +212,10 @@ workflow {
 
                 return groupMeta }
 
+        // subset accesssions into batches
         ParseSubsets( Parameters, Grouped )
 
+        // download datasets
         Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
 
         ////BRANCH_RUN////
