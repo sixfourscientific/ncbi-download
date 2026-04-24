@@ -279,21 +279,23 @@ workflow {
             def indexMeta = [:]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
-            
+
             return indexMetaNew }
 
         Fetch = Fetch.out.Main.map{ coreMeta -> 
         
-            def indexMeta = [:]
+            def indexMeta = [
+                datasets : coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main,
+                ]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
-            
+
             return indexMetaNew }
 
         Taxonomy = Taxonomy.out.Main.map{ coreMeta -> 
 
             def indexMeta = [
-                taxonomy: coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
+                taxonomy : coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
                 ]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
@@ -301,11 +303,11 @@ workflow {
             return indexMetaNew }
 
 
-        Index = Taxonomy.out.Main.map{ coreMeta -> 
+        Index = Fetch.out.Main.map{ coreMeta -> 
 
             def indexMeta = [
                 datasets: "${workflow.outputDir}/$datasetsSubdir",
-                taxonomy: "${workflow.outputDir}/$taxonomySubdir",
+                taxonomy: params.TAXONOMY ? "${workflow.outputDir}/$taxonomySubdir" : 'NA',
                 ]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
@@ -405,17 +407,18 @@ output {
             }
 
         Fetch { 
-            enabled      false
+            enabled      true
             mode         'copy'
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "fetch/$indexMeta.run" }
-            index {
-                path   'bridge-fetch.csv'
-                header true
-                sep    '\t'
+                indexMeta.datasets >> "$datasetsSubdir/" 
                 }
+         // index {
+         //     path   'bridge-datasets.csv'
+         //     header true
+         //     sep    '\t'
+         //     }
             }
 
         // publish files without index (would be recorded as list)
@@ -427,6 +430,11 @@ output {
             path { indexMeta -> 
                 indexMeta.taxonomy >> "$taxonomySubdir/" 
                 }
+         // index {
+         //     path   'bridge-taxonomy.csv'
+         //     header true
+         //     sep    '\t'
+         //     }
             }
 
         // publish index without files (recorded as single directory)
