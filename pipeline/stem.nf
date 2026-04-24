@@ -285,7 +285,7 @@ workflow {
         Fetch = Fetch.out.Main.map{ coreMeta -> 
         
             def indexMeta = [
-                datasets : coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main,
+                files : coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main,
                 ]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
@@ -295,7 +295,7 @@ workflow {
         Taxonomy = Taxonomy.out.Main.map{ coreMeta -> 
 
             def indexMeta = [
-                taxonomy : coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
+                files : coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
                 ]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
@@ -412,7 +412,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                indexMeta.datasets >> "$datasetsSubdir/" 
+                indexMeta.files >> "$datasetsSubdir/" 
                 }
          // index {
          //     path   'bridge-datasets.csv'
@@ -428,7 +428,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                indexMeta.taxonomy >> "$taxonomySubdir/" 
+                indexMeta.files >> "$taxonomySubdir/" 
                 }
          // index {
          //     path   'bridge-taxonomy.csv'
