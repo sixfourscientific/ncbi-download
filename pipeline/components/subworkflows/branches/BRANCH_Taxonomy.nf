@@ -42,36 +42,15 @@ workflow SUBWORKFLOW {
 
         ////LEAF_PARSE_RUN////
 
-        | map { coreMeta ->
+        | collect
 
-            def groupKey = getGroupKey( coreMeta.group ?: 'forced', 'group')
-
-            return [
-                groupKey,
-                coreMeta, 
-                ] }
-
-        | groupTuple ( by:0 )
-
-        | map { groupKey, coreMetaGroup ->
-
-            def groupTag = groupKey
-
-            def coreMetaSorted = coreMetaGroup
-                .sort{ first, second -> first['name'] <=> second['name'] }
-
-            // group info for non standard coreMeta fields 
-            def coreMetaNew = [
-                type : groupKey,
-                url  : null,
-                ]
-
-            def coreMetaTemplate = coreMetaSorted
-                .first() + coreMetaNew
+        | flatMap { coreMetaGroup ->
 
             // group 1
             def (SOFTWARE1, COMMAND1, BRANCH1, type1) = [ "CUSTOM", "DOWNLOAD", "TAXONOMY", "main" ]
-            def outputList1 = coreMetaSorted.OUTPUTS[(SOFTWARE1)][(COMMAND1)][(BRANCH1)][(type1)]
+            def outputList1 = coreMetaGroup.OUTPUTS[(SOFTWARE1)][(COMMAND1)][(BRANCH1)][(type1)]
+                .flatten()
+                .sort()
 
             def outputMeta1 = [
                 (SOFTWARE1) : [
@@ -81,11 +60,14 @@ workflow SUBWORKFLOW {
                             ] ] ],
                                 ]
 
-            def groupMeta1 = groupOutputs( coreMetaTemplate, outputMeta1, groupTag )
+            def groupMeta1 = [
+                RUN     : 'taxonomy',
+                OUTPUTS : outputMeta1,
+                ]
 
             // group n ...
             
-            return groupMeta1 }
+            return [groupMeta1] }
 
         | set { Processed }
 
