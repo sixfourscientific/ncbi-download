@@ -234,28 +234,6 @@ workflow {
 
     publish: 
     
-        Files = Taxonomy.out.Main.map{ coreMeta -> 
-
-            def indexMeta = [
-                taxonomy: coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
-                ]
-            
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
-            
-            return indexMetaNew }
-
-
-        Index = Taxonomy.out.Main.map{ coreMeta -> 
-
-            def indexMeta = [
-                datasets: "${workflow.outputDir}/$datasetsSubdir",
-                taxonomy: "${workflow.outputDir}/$taxonomySubdir",
-                ]
-            
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
-            
-            return indexMetaNew }
-
         Search = Search.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
@@ -296,14 +274,6 @@ workflow {
             
             return indexMetaNew }
 
-        Fetch = Fetch.out.Main.map{ coreMeta -> 
-        
-            def indexMeta = [:]
-            
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
-            
-            return indexMetaNew }
-
         Filter = Filter.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
@@ -312,36 +282,43 @@ workflow {
             
             return indexMetaNew }
 
+        Fetch = Fetch.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+        Taxonomy = Taxonomy.out.Main.map{ coreMeta -> 
+
+            def indexMeta = [
+                taxonomy: coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
+                ]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+
+        Index = Taxonomy.out.Main.map{ coreMeta -> 
+
+            def indexMeta = [
+                datasets: "${workflow.outputDir}/$datasetsSubdir",
+                taxonomy: "${workflow.outputDir}/$taxonomySubdir",
+                ]
+            
+            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            
+            return indexMetaNew }
+
+
         ////BRANCH_PUBLISH////
 
     }
 
 
 output {
-
-        // publish files without index (would be recorded as list)
-        Files { 
-            enabled      true
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            path { indexMeta -> 
-                indexMeta.taxonomy >> "$taxonomySubdir/" 
-                }
-            }
-
-        // publish index without files (recorded as single directory)
-        Index { 
-            enabled      true
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            index {
-                path   'bridge-main.csv'
-                header true
-                sep    '\t'
-                }
-            }
 
         Search { 
             enabled      false
@@ -413,6 +390,20 @@ output {
                 }
             }
 
+        Filter { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "filter/$indexMeta.run" }
+            index {
+                path   'bridge-filter.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
         Fetch { 
             enabled      false
             mode         'copy'
@@ -427,15 +418,25 @@ output {
                 }
             }
 
-        Filter { 
-            enabled      false
+        // publish files without index (would be recorded as list)
+        Taxonomy { 
+            enabled      true
             mode         'copy'
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "filter/$indexMeta.run" }
+                indexMeta.taxonomy >> "$taxonomySubdir/" 
+                }
+            }
+
+        // publish index without files (recorded as single directory)
+        Index { 
+            enabled      true
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
             index {
-                path   'bridge-filter.csv'
+                path   'bridge-main.csv'
                 header true
                 sep    '\t'
                 }
