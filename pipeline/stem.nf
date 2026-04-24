@@ -226,6 +226,8 @@ workflow {
         // download datasets
         Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
 
+Taxonomy.out.Main | view { it -> "||||$it\n"}
+
         ////BRANCH_RUN////
 
     /*
@@ -430,11 +432,11 @@ output {
             path { indexMeta -> 
                 indexMeta.files >> "$taxonomySubdir/" 
                 }
-         // index {
-         //     path   'bridge-taxonomy.csv'
-         //     header true
-         //     sep    '\t'
-         //     }
+            index {
+                path   'bridge-taxonomy.csv'
+                header true
+                sep    '\t'
+                }
             }
 
         // publish index without files (recorded as single directory)

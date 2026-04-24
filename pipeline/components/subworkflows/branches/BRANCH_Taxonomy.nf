@@ -42,33 +42,6 @@ workflow SUBWORKFLOW {
 
         ////LEAF_PARSE_RUN////
 
-        | collect
-
-        | flatMap { coreMetaGroup ->
-
-            // group 1
-            def (SOFTWARE1, COMMAND1, BRANCH1, type1) = [ "CUSTOM", "DOWNLOAD", "TAXONOMY", "main" ]
-            def outputList1 = coreMetaGroup.OUTPUTS[(SOFTWARE1)][(COMMAND1)][(BRANCH1)][(type1)]
-                .flatten()
-                .sort()
-
-            def outputMeta1 = [
-                (SOFTWARE1) : [
-                    (COMMAND1) : [ 
-                        (BRANCH1): [
-                            (type1) : outputList1,
-                            ] ] ],
-                                ]
-
-            def groupMeta1 = [
-                RUN     : 'taxonomy',
-                OUTPUTS : outputMeta1,
-                ]
-
-            // group n ...
-            
-            return [groupMeta1] }
-
         | set { Processed }
 
 
