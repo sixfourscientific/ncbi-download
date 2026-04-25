@@ -229,7 +229,9 @@ workflow {
         // split archives
         Archives = Fetch.out.Main
             
-            | toSortedList{ coreMeta1, coreMeta2 -> coreMeta1.BATCH.INDEX <=> coreMeta2.BATCH.INDEX }
+            | toSortedList{ coreMeta1, coreMeta2 -> 
+            
+                coreMeta1.BATCH.INDEX <=> coreMeta2.BATCH.INDEX }
 
             | flatten()
 
