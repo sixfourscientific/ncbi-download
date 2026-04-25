@@ -164,7 +164,7 @@ workflow {
 
         def BatchMeta = params.BATCH ?: [:] + [
             NAME      : 'downloads',
-            BATCHSIZE : 3,
+            BATCHSIZE : 2,
             TARGETS   : [['id'],['report','accession']],
             HEADER    : false,
             VERBOSE   : false,
@@ -226,7 +226,40 @@ workflow {
         // download datasets
         Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
 
-Taxonomy.out.Main | view { it -> "||||$it\n"}
+        // split archives
+        Archives = Fetch.out.Main
+            
+            | toSortedList{ coreMeta1, coreMeta2 -> coreMeta1.BATCH.INDEX <=> coreMeta2.BATCH.INDEX }
+
+            | flatten()
+
+            | flatMap { coreMeta ->
+
+                def subPath = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
+
+                def fileList = subPath.inject(coreMeta.OUTPUTS) { acc, key -> acc[key] }
+
+                def splitMetaList = fileList
+                    .sort{ first, second -> first <=> second}
+                    .withIndex()
+                    .collect { output, idx ->
+
+                        def batchTag = "BATCH-${coreMeta.BATCH.INDEX}"
+
+                        def splitTag = "$batchTag-SPLIT-${idx+1}"
+                        
+                        def outputMeta = subPath
+                            .reverse()
+                            .inject(output) { acc, key -> [(key): acc] }
+
+                        def splitMeta = [
+                            RUN     : splitTag,
+                            OUTPUTS : outputMeta,
+                            ]
+
+                        return splitMeta }
+
+                return splitMetaList }
 
         ////BRANCH_RUN////
 
@@ -253,7 +286,7 @@ Taxonomy.out.Main | view { it -> "||||$it\n"}
             return indexMetaNew }
 
         Format = Format.out.Main.map{ coreMeta -> 
-        
+
             def indexMeta = [:]
             
             def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
@@ -284,8 +317,8 @@ Taxonomy.out.Main | view { it -> "||||$it\n"}
 
             return indexMetaNew }
 
-        Fetch = Fetch.out.Main.map{ coreMeta -> 
-        
+        Fetch = Archives.map{ coreMeta -> 
+
             def indexMeta = [
                 files : coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main,
                 ]
@@ -304,8 +337,9 @@ Taxonomy.out.Main | view { it -> "||||$it\n"}
             
             return indexMetaNew }
 
+        Index = Fetch.out.Main.first().map{ coreMeta -> 
 
-        Index = Fetch.out.Main.map{ coreMeta -> 
+            // N.B. general bridge using first element
 
             def indexMeta = [
                 datasets: "${workflow.outputDir}/$datasetsSubdir",
@@ -416,11 +450,11 @@ output {
             path { indexMeta -> 
                 indexMeta.files >> "$datasetsSubdir/" 
                 }
-         // index {
-         //     path   'bridge-datasets.csv'
-         //     header true
-         //     sep    '\t'
-         //     }
+            index {
+                path   'bridge-datasets.csv'
+                header true
+                sep    '\t'
+                }
             }
 
         // publish files without index (would be recorded as list)
