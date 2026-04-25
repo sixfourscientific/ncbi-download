@@ -30,6 +30,7 @@ include {
     viewMeta as viewMeta;
     prepBridge as prepBridge;
     getUrlTag as getUrlTag;
+    packageSubMap as packageSubMap;
     } from "$params.importMap.functions/core/Utils"
 
 // SUBWORKFLOWS
@@ -241,19 +242,19 @@ workflow {
 
                 def subPath = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
 
-                def fileList = subPath.inject(coreMeta.OUTPUTS) { acc, key -> acc[key] }
+                // extract group values via sub path 
+                def valueList = subPath
+                    .inject( coreMeta.OUTPUTS ) { acc, key -> acc[key] }
 
-                def splitMetaList = fileList
+                // repackage individual values in submap
+                def splitMetaList = valueList
                     .sort{ first, second -> first <=> second}
                     .withIndex()
                     .collect { output, idx ->
 
-
                         def splitTag = "$batchTag-SPLIT-${idx+1}"
                         
-                        def outputMeta = subPath
-                            .reverse()
-                            .inject(output) { acc, key -> [(key): acc] }
+                        def outputMeta = packageSubMap(subPath,output)
 
                         def splitMeta = [
                             RUN     : splitTag,

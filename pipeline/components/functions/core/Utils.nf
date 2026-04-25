@@ -414,6 +414,16 @@ def updateNestPath( coreOutputMeta, outputMeta, pathList ) {
 
 
 
+def packageSubMap( subPath, value ){
+
+    def subMap = subPath
+        .reverse()
+        .inject( value ) { acc, key -> return [(key): acc] }
+
+    return subMap }
+
+
+
 def updateOutputs( coreMeta, outputMeta ){
 
     // extract nested keys except leaf submap
