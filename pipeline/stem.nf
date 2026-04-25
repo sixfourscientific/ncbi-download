@@ -235,6 +235,8 @@ workflow {
 
             | flatMap { coreMeta ->
 
+                def batchTag = "BATCH-${coreMeta.BATCH.INDEX}"
+
                 def subPath = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
 
                 def fileList = subPath.inject(coreMeta.OUTPUTS) { acc, key -> acc[key] }
@@ -244,7 +246,6 @@ workflow {
                     .withIndex()
                     .collect { output, idx ->
 
-                        def batchTag = "BATCH-${coreMeta.BATCH.INDEX}"
 
                         def splitTag = "$batchTag-SPLIT-${idx+1}"
                         
