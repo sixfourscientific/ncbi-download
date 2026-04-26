@@ -662,7 +662,7 @@ def formatBasepairs (value) {
 def makeTag( args ){
     
     def tagList   = args.tags
-    def delimiter = args.delimiter
+    def delimiter = args.delimiter ?: '.'
     
     def tag = tagList
         // remove null

@@ -31,6 +31,7 @@ include {
     prepBridge as prepBridge;
     getUrlTag as getUrlTag;
     packageSubMap as packageSubMap;
+    makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
 
 // SUBWORKFLOWS
@@ -235,8 +236,6 @@ workflow {
 
             | flatMap { coreMeta ->
 
-                def batchTag = "BATCH-${coreMeta.BATCH.INDEX}"
-
                 def subPath = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
 
                 // extract group values via sub path 
@@ -249,8 +248,11 @@ workflow {
                     .withIndex()
                     .collect { output, idx ->
 
-                        def splitTag = "$batchTag-SPLIT-${idx+1}"
-                        
+                        def splitTag = makeTag(
+                            tags      : [coreMeta.RUN, 'SPLIT', idx+1],
+                            delimiter : '-',
+                            )
+
                         def outputMeta = packageSubMap(subPath,output)
 
                         def splitMeta = [
