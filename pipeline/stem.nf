@@ -178,9 +178,6 @@ workflow {
         
         // BRANCH( Inputs|BRANCH.out.Main)
 
-        // obtain taxonomy files
-        Taxonomy( Parameters, TAXONOMY )
-
         // obtain datasets summary
         Search( Parameters, Inputs | filter { RUN_SEARCH || RUN_FETCH }  )
 
@@ -264,6 +261,9 @@ workflow {
                         return splitMeta }
 
                 return splitMetaList }
+
+        // obtain taxonomy files if provided
+        Taxonomy( Parameters, TAXONOMY )
 
         ////BRANCH_RUN////
 
