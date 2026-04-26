@@ -262,7 +262,7 @@ workflow {
 
                 return splitMetaList }
 
-        // obtain taxonomy files if provided
+        // obtain supplementary taxonomy files (if provided)
         Taxonomy( Parameters, TAXONOMY )
 
         ////BRANCH_RUN////

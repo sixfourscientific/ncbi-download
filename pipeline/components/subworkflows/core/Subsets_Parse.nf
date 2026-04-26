@@ -9,6 +9,7 @@ include {
 include { 
     getSubMap as getSubMap;
     flattenMap as flattenMap;
+    makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
 
 
@@ -35,7 +36,7 @@ workflow Subsets_Parse {
         
         | set { Subsets }
 
-        // record subset in file
+        // record subset in batch file
         Subsets
 
             | collectFile(
@@ -81,7 +82,7 @@ workflow Subsets_Parse {
 
             | set { Files }
 
-        // recombine subset with file
+        // recombine subset with batch file
         Subsets
 
         | mix ( Files ) 
@@ -112,11 +113,17 @@ workflow Subsets_Parse {
 
                     def (filePath) = nonMetaList
 
+                    def runTag = makeTag(
+                        tags      : [ subsetMeta.BATCH.NAME, 'BATCH', subsetMeta.BATCH.INDEX ], 
+                        delimiter : '-',
+                        )
+
                     def batchMeta = subsetMeta.BATCH + [
                         FILE: filePath,
                         ]
 
                     def subsetMetaNew = subsetMeta + [
+                        RUN   : runTag,
                         BATCH : batchMeta,
                         ]
 

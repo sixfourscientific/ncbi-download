@@ -659,6 +659,19 @@ def formatBasepairs (value) {
 
     return "$value$unit" }
 
+def makeTag( args ){
+    
+    def tagList   = args.tags
+    def delimiter = args.delimiter
+    
+    def tag = tagList
+        // remove null
+        .findAll()
+        // join tags
+        .join(delimiter)
+
+    return tag }
+
 
 
 def makeComplement(originalSeq) { // , reverse
