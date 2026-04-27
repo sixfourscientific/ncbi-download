@@ -1,9 +1,9 @@
 type	url
-#kraken2	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz
-#kraken2	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz
+kraken2	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz
+kraken2	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz
 kraken2	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
-#krona	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/dead_nucl.accession2taxid.gz
-#krona	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/dead_wgs.accession2taxid.gz
+krona	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/dead_nucl.accession2taxid.gz
+krona	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/dead_wgs.accession2taxid.gz
 blast	https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb-metadata.json
 blast	https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
-#other	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.EXTRA.gz
+other	https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.EXTRA.gz

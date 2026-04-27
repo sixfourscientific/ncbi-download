@@ -49,8 +49,8 @@ include {
     } from "${params.importMap.subworkflows}/branches/BRANCH_Taxonomy"
 
 include {
-    SUBWORKFLOW as Search;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Search"
+    SUBWORKFLOW as Query;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Query"
 
 include {
     SUBWORKFLOW as Count;
@@ -94,7 +94,7 @@ RUN_ALL  = EXECUTE.contains('all')
 
 // RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
 
-RUN_SEARCH = RUN_ALL ?: EXECUTE.contains('search')
+RUN_QUERY = RUN_ALL ?: EXECUTE.contains('query')
 
 RUN_COUNT = RUN_ALL ?: EXECUTE.contains('count')
 
@@ -184,10 +184,10 @@ workflow {
         // BRANCH( Inputs|BRANCH.out.Main)
 
         // obtain datasets summary
-        Search( Parameters, Inputs | filter { RUN_SEARCH || RUN_FETCH }  )
+        Query( Parameters, Inputs | filter { RUN_QUERY || RUN_FETCH }  )
 
         // examine report availability
-        Count( Parameters, Search.out.Main )
+        Count( Parameters, Query.out.Main )
 
         // reformat json/jsonl as tsv
         Format( Parameters, Count.out.Main | filter { coreMeta -> coreMeta.AVAILABLE }  )
@@ -262,7 +262,7 @@ workflow {
 
     publish: 
     
-        Search = Search.out.Main.map{ coreMeta -> 
+        Query = Query.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
             
@@ -409,15 +409,15 @@ workflow {
 
 output {
 
-        Search { 
+        Query { 
             enabled      false
             mode         'copy'
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "search/$indexMeta.run" }
+                return "query/$indexMeta.run" }
             index {
-                path   'bridge-search.csv'
+                path   'bridge-query.csv'
                 header true
                 sep    '\t'
                 }

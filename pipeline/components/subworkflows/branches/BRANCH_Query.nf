@@ -34,7 +34,7 @@ workflow SUBWORKFLOW {
 
         // DATASETS SUMMARY
         
-        ConfigSummaryDatasets = ParseConfig( Parameters, [software: 'DATASETS', command: 'SUMMARY', branch: 'SEARCH'] )
+        ConfigSummaryDatasets = ParseConfig( Parameters, [software: 'DATASETS', command: 'SUMMARY', branch: 'QUERY'] )
         
         SummaryDatasets( Inputs, ConfigSummaryDatasets )
 

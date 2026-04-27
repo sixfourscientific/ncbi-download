@@ -32,7 +32,7 @@ workflow SUBWORKFLOW {
 
             | map { coreMeta ->
 
-                def summaryFile = new File(coreMeta.OUTPUTS.DATASETS.SUMMARY.SEARCH.main.toString())
+                def summaryFile = new File(coreMeta.OUTPUTS.DATASETS.SUMMARY.QUERY.main.toString())
 
                 def count = 0
 

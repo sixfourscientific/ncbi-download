@@ -44,7 +44,7 @@
   },
   "DATASETS": {
     "SUMMARY": {
-      "SEARCH": {
+      "QUERY": {
         "CONFIG": {
           "VERSION": [],
           "LABEL": {
@@ -65,7 +65,7 @@
               "--mag": "exclude",
               "--reference": true
             },
-            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Summary_Search.tsv"
+            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Summary_Query.tsv"
           }
         }
       }
