@@ -25,7 +25,7 @@ def parseSupplementary ( supplementary, PARAMS ){
 
 
 
-def getUrlTag(url) {
+def parseUrl(url) {
 
     def urlObj = url.toURL()
 
@@ -47,14 +47,13 @@ def getUrlTag(url) {
     def baseName = fileName
         .replaceAll(/(\.[^.]+){1,2}$/, '')
 
-    def urlTag = [
+    def urlList = [
         hostTag,
         stemTag,
         baseName,
         ]
-        .join('-')
 
-    return urlTag }
+    return urlList }
 
 
 

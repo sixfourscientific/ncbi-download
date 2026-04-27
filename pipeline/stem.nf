@@ -29,8 +29,8 @@ include {
     parseSupplementary as parseSupplementary;
     viewMeta as viewMeta;
     prepBridge as prepBridge;
-    getUrlTag as getUrlTag;
     packageSubMap as packageSubMap;
+    parseUrl as parseUrl;
     makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
 
@@ -154,14 +154,19 @@ workflow {
             // create custom run tag from parsed url
             | map { coreMeta ->
 
-                def runTag = getUrlTag(coreMeta['url'])
+                def urlList = parseUrl(coreMeta['url'])
+
+                def urlTag = makeTag(
+                    tags      : urlList,
+                    delimiter : '-',
+                    )
 
                 def coreMetaNew = coreMeta + [
-                    RUN : runTag,
+                    RUN : urlTag,
                     ]
 
                 return coreMetaNew }
-                
+
         // SUBSETS
 
         def BatchMeta = (params.BATCH ?: [:]) + [
