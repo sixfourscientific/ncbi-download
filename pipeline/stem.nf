@@ -394,9 +394,13 @@ workflow {
 
             // N.B. general bridge using first element
 
+            def taxonomySubdir = params.TAXONOMY 
+                ? "${workflow.outputDir}/$taxonomySubdir"
+                : 'NA'
+            
             def indexMeta = [
                 datasets: "${workflow.outputDir}/$datasetsSubdir",
-                taxonomy: params.TAXONOMY ? "${workflow.outputDir}/$taxonomySubdir" : 'NA',
+                taxonomy: taxonomySubdir,
                 ]
             
             def indexMetaNew = prepBridge( 
