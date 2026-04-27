@@ -1,20 +1,9 @@
 {
   "DEBUG": false,
   "PUBLISH": false,
-  "INPUT": {
-    "SAMPLES": {
-      "INFO": null,
-      "INFO_ID": null,
-      "DETAILED": false,
-      "RUN_ID": null,
-      "UNIQUE": [],
-      "EXISTS": [],
-      "CONTENTS": [],
-      "NESTED": {},
-      "EXTENSIONS": {},
-      "GUNZIPPED": false
-    }
-  },
+  "BATCH":{
+    "BATCHSIZE":4
+    },
   "CUSTOM": {
     "DOWNLOAD": {
       "TAXONOMY": {

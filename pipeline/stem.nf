@@ -119,7 +119,7 @@ workflow {
 
         // SAMPLES
 
-        def InputMeta = params.INPUT.SAMPLES + [
+        def InputMeta = (params.INPUT?.SAMPLES ?: [:]) + [
             INFO     : params.samples,
             INFO_ID  : "SAMPLES",
             ]
@@ -164,9 +164,8 @@ workflow {
                 
         // SUBSETS
 
-        def BatchMeta = params.BATCH ?: [:] + [
+        def BatchMeta = (params.BATCH ?: [:]) + [
             NAME      : 'downloads',
-            BATCHSIZE : 2,
             TARGETS   : [['id'],['report','accession']],
             HEADER    : false,
             VERBOSE   : false,
