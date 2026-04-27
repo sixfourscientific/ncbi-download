@@ -58,7 +58,7 @@
             "CORE": {
               "--annotated": false,
               "--as-json-lines": true,
-              "--assembly-level": "complete,chromosome",
+              "--assembly-level": "complete,chromosome,scaffold",
               "--assembly-source": "refseq",
               "--exclude-atypical": true,
               "--limit": "all",

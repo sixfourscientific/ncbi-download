@@ -120,7 +120,7 @@ workflow {
         // SAMPLES
 
         def InputMeta = (params.INPUT?.SAMPLES ?: [:]) + [
-            INFO     : params.samples,
+            INFO     : params.inputs,
             INFO_ID  : "SAMPLES",
             ]
 

@@ -268,8 +268,8 @@ IFS='' read -r -d '' LAUNCH_COMMAND << EOF
         $PREVIEW \\
         -profile $SYSTEM \\
         -params-file $PARAMETER_FILE \\
-        --samples $INPUTS \\
         --execute $BRANCHES \\
+        --inputs $INPUTS \\
         --supplementary "$SUPPLEMENTARY"
 EOF
 
