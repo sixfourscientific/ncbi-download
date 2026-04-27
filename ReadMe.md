@@ -1,6 +1,6 @@
 # README
 
-
+A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
 
 ## Quickstart
 ```
