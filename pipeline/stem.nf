@@ -279,7 +279,13 @@ workflow {
         
             def indexMeta = [:]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
             
             return indexMetaNew }
 
@@ -287,7 +293,13 @@ workflow {
         
             def indexMeta = [:]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
             
             return indexMetaNew }
 
@@ -295,7 +307,13 @@ workflow {
 
             def indexMeta = [:]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
             
             return indexMetaNew }
 
@@ -303,7 +321,13 @@ workflow {
         
             def indexMeta = [:]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
             
             return indexMetaNew }
 
@@ -311,7 +335,13 @@ workflow {
         
             def indexMeta = [:]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
             
             return indexMetaNew }
 
@@ -319,8 +349,14 @@ workflow {
         
             def indexMeta = [:]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
-
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
+            
             return indexMetaNew }
 
         Fetch = Archives.map{ coreMeta -> 
@@ -329,8 +365,14 @@ workflow {
                 files : coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main,
                 ]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
-
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : true, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
+            
             return indexMetaNew }
 
         Taxonomy = Taxonomy.out.Main.map{ coreMeta -> 
@@ -339,7 +381,13 @@ workflow {
                 files : coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
                 ]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )            
             
             return indexMetaNew }
 
@@ -352,7 +400,13 @@ workflow {
                 taxonomy: params.TAXONOMY ? "${workflow.outputDir}/$taxonomySubdir" : 'NA',
                 ]
             
-            def indexMetaNew = prepBridge( coreMeta: coreMeta, indexMeta: indexMeta, INTERMEDIATE: false, UPDATE: false )            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : true, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
             
             return indexMetaNew }
 

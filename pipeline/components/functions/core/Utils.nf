@@ -100,10 +100,16 @@ def prepBridge( args ){
     def indexMeta = args.indexMeta
     def indexMetaNew = [:]
 
-    // new header
-    if ( !args.UPDATE && !args.INTERMEDIATE ) {
+    def basicIndex = args.BASIC
+    def updateIndex = args.UPDATE
+    def interimIndex = args.INTERIM
 
-        indexMetaNew.putAll( [run  : coreMeta.RUN ] + indexMeta ) }
+    // new header
+    if ( !updateIndex && !interimIndex ) {
+    
+        def runMap = basicIndex ? [:] : [run  : coreMeta.RUN ]
+
+        indexMetaNew.putAll( runMap + indexMeta ) }
 
     // update original header
     else {
@@ -118,7 +124,7 @@ def prepBridge( args ){
                 return  [ (key) : coreMeta[field] ] }
 
         // original fields including updates
-        if ( !args.INTERMEDIATE ) {
+        if ( !interimIndex ) {
 
             indexMetaNew.putAll(fieldMeta) }
 
@@ -126,11 +132,11 @@ def prepBridge( args ){
         else {
 
             // tag intermediary info
-            def intermediaryMeta = indexMeta
+            def interimMeta = indexMeta
                 .collectEntries{ key, value ->
                     [ "${key}.${params.intTag}" : value ]}
 
-            indexMetaNew.putAll( fieldMeta + intermediaryMeta ) }
+            indexMetaNew.putAll( fieldMeta + interimMeta ) }
 
         }
 
