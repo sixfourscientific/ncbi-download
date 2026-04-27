@@ -2,3 +2,5 @@
 archive
 **/launch_*
 **/.nextflow*
+LAUNCH.sh
+LaunchWorkflow.sh
