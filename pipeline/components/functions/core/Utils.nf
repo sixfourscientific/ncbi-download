@@ -589,6 +589,7 @@ def splitBatch( args ) {
 
             def (outputMeta) = packMaps(entryList)
 
+            // should this be override or incorporate? provide options between these?
             def splitMeta = [
                 RUN     : runTagNew,
                 OUTPUTS : outputMeta,
