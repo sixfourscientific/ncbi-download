@@ -90,23 +90,12 @@ Parameters = params
 
 EXECUTE  = params.execute.split(',')
 
-RUN_ALL  = EXECUTE.contains('all')
-
 // RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
 
-RUN_QUERY = RUN_ALL ?: EXECUTE.contains('query')
+RUN_QUERY = EXECUTE.contains('query')
 
-RUN_COUNT = RUN_ALL ?: EXECUTE.contains('count')
+RUN_FETCH = EXECUTE.contains('fetch')
 
-RUN_FORMAT = RUN_ALL ?: EXECUTE.contains('format')
-
-RUN_SPLIT = RUN_ALL ?: EXECUTE.contains('split')
-
-RUN_EXAMINE = RUN_ALL ?: EXECUTE.contains('examine')
-
-RUN_FETCH = RUN_ALL ?: EXECUTE.contains('fetch')
-
-RUN_FILTER = RUN_ALL ?: EXECUTE.contains('filter')
 
 ////BRANCH_FILTER////
 
