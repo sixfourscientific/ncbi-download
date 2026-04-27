@@ -29,7 +29,7 @@ include {
     parseSupplementary as parseSupplementary;
     viewMeta as viewMeta;
     prepBridge as prepBridge;
-    packMaps as packMaps;
+    splitBatch as splitBatch;
     parseUrl as parseUrl;
     makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
@@ -240,35 +240,14 @@ workflow {
 
             | flatMap { coreMeta ->
 
-                def subPath = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
-
-                // extract group values via sub path 
-                def valueList = subPath
-                    .inject( coreMeta.OUTPUTS ) { acc, key -> acc[key] }
-
-                // repackage individual values in submap
-                def splitMetaList = valueList
-                    .sort{ first, second -> first <=> second}
-                    .withIndex()
-                    .collect { output, idx ->
-
-                        def splitTag = makeTag(
-                            tags      : [coreMeta.RUN, 'SPLIT', idx+1],
-                            delimiter : '-',
-                            )
-
-                        def entryList = [
-                            [subPath,output],
-                            ]
-
-                        def (outputMeta) = packSubMaps(entryList)
-
-                        def splitMeta = [
-                            RUN     : splitTag,
-                            OUTPUTS : outputMeta,
-                            ]
-
-                        return splitMeta }
+                def pathList = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
+                
+                def splitMetaList = splitBatch(
+                    coreMeta : coreMeta,
+                    pathList : pathList,
+                    splitTag : 'SPLIT',
+                    delimiter : '-',
+                    )
 
                 return splitMetaList }
 

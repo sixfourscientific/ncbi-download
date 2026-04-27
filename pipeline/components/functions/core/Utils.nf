@@ -419,7 +419,7 @@ def updateNestPath( coreOutputMeta, outputMeta, pathList ) {
 
 
 
-def packSubMaps( infoList ){
+def packMaps( infoList ){
 
     def subMaps = infoList
         .collect{ subPath, value ->
@@ -537,7 +537,7 @@ def postStage( coreMeta, outputMeta ){
 
 
 
-def splitOutputs( coreMeta, outputMeta, splitTag = null ){
+def splitOutputs( coreMeta, outputMeta, splitTag = null ) {
 
     def runTagNew = [
         coreMeta.RUN,
@@ -554,6 +554,49 @@ def splitOutputs( coreMeta, outputMeta, splitTag = null ){
         ] 
 
     return coreMetaNew }
+
+
+
+def splitBatch( args ) {
+
+    def coreMeta = args.coreMeta
+    def pathList = args.pathList
+    def splitTag = args.splitTag
+    def delimiter = args.delimiter
+    
+    // extract grouped values via sub path 
+    def valueList = pathList
+    
+        .inject( coreMeta.OUTPUTS ) { acc, key -> acc[key] }
+
+    // repack individual values into sub maps
+    def splitMetaList = valueList
+
+        .sort{ first, second -> first <=> second}
+
+        .withIndex()
+
+        .collect { output, idx ->
+
+            def runTagNew = makeTag(
+                tags      : [coreMeta.RUN, splitTag, idx+1],
+                delimiter : delimiter,
+                )
+
+            def entryList = [
+                [ pathList, output ],
+                ]
+
+            def (outputMeta) = packMaps(entryList)
+
+            def splitMeta = [
+                RUN     : runTagNew,
+                OUTPUTS : outputMeta,
+                ]
+
+            return splitMeta }
+    
+    return splitMetaList }
 
 
 
