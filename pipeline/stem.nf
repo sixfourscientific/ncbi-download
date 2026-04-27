@@ -29,7 +29,7 @@ include {
     parseSupplementary as parseSupplementary;
     viewMeta as viewMeta;
     prepBridge as prepBridge;
-    packageSubMap as packageSubMap;
+    packMaps as packMaps;
     parseUrl as parseUrl;
     makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
@@ -257,7 +257,11 @@ workflow {
                             delimiter : '-',
                             )
 
-                        def outputMeta = packageSubMap(subPath,output)
+                        def entryList = [
+                            [subPath,output],
+                            ]
+
+                        def (outputMeta) = packSubMaps(entryList)
 
                         def splitMeta = [
                             RUN     : splitTag,

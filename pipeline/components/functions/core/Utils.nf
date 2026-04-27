@@ -419,14 +419,15 @@ def updateNestPath( coreOutputMeta, outputMeta, pathList ) {
 
 
 
-def packageSubMap( subPath, value ){
+def packSubMaps( infoList ){
 
-    def subMap = subPath
-        .reverse()
-        .inject( value ) { acc, key -> return [(key): acc] }
+    def subMaps = infoList
+        .collect{ subPath, value ->
+            subPath
+                .reverse()
+                .inject( value ) { acc, key -> return [(key): acc] } }
 
-    return subMap }
-
+    return subMaps }
 
 
 def updateOutputs( coreMeta, outputMeta ){
