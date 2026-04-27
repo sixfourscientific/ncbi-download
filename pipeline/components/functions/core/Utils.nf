@@ -565,10 +565,15 @@ def splitBatch( args ) {
     def delimiter = args.delimiter
     
     // extract grouped values via sub path 
-    def valueList = pathList
+    def pathValues = pathList
     
         .inject( coreMeta.OUTPUTS ) { acc, key -> acc[key] }
 
+    // conform single batches to list
+    def valueList = pathValues instanceof List
+        ?   pathValues
+        : [ pathValues ]
+    
     // repack individual values into sub maps
     def splitMetaList = valueList
 
@@ -596,7 +601,7 @@ def splitBatch( args ) {
                 ]
 
             return splitMeta }
-    
+
     return splitMetaList }
 
 
