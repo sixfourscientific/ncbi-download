@@ -5,6 +5,7 @@
 
 include { 
     viewMeta as viewMeta;
+    makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
 
 include { 
@@ -36,30 +37,32 @@ workflow SUBWORKFLOW {
             def (SOFTWARE, COMMAND, BRANCH, type) = [ "CUSTOM", "TABULATE", "FORMAT", "main" ]
 
             def splitMetaList = coreMeta.OUTPUTS[(SOFTWARE)][(COMMAND)][(BRANCH)][(type)]
+
                 // extract table entries
                 .splitCsv( 
                     header : true,
                     skip   : 0,
                     sep    : '\t' 
                     )
+                
                 .withIndex()
+
                 // cycle table entries...
                 .collect{entry, idx ->
 
                     def idxTag = idx+1
 
-                    def runTagNew = [
-                        coreMeta.RUN,
-                        idxTag,
-                        ]
-                        .join('-')
+                    def runTagNew = makeTag(
+                        tags      : [ coreMeta.RUN, idxTag, ],
+                        delimiter : '-',
+                        )
 
                     // store record number & report info
                     def splitMeta = coreMeta + [
                         RUN     : runTagNew,
                         record  : idxTag,
                      // report  : entry,
-                        report  : [ accession : entry.accession ], // simplified report info for testing
+                        report  : [ accession : entry.accession ], // simplified report info
                         OUTPUTS : null,
                         ]
 
