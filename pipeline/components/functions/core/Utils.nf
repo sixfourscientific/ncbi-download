@@ -358,7 +358,7 @@ def updateOutputs( coreMeta, outputMeta ){
 */
 
 
-
+// TO GO
 def getNestStructure( outputMeta, keyList = []) {
     
     // init structure store
@@ -382,11 +382,11 @@ def getNestStructure( outputMeta, keyList = []) {
 
             }
 
-    // remove duplicate paths
+   // remove duplicate paths
     return structureList.unique() }
 
 
-
+// TO GO
 def updateNestPath( coreOutputMeta, outputMeta, pathList ) {
 
     // check SOFTWARE -> COMMAND -> BRANCH
@@ -419,6 +419,42 @@ def updateNestPath( coreOutputMeta, outputMeta, pathList ) {
 
 
 
+def updateMap( coreOutputMeta, pathList, leafObj ) {
+
+    def ( software, command, branch, type ) = pathList
+
+    // check SOFTWARE -> COMMAND -> BRANCH
+    assert software && command && ((branch && type) || (branch && !type)), 
+        "Unexpected output map structure; found ${pathList.size()} levels \"${pathList.join(', ')}\", "
+
+    // conform leaf object within type map as required
+    def coreLeafMeta = type 
+        ? [ (type) : leafObj ] 
+        : leafObj
+
+    // initialise other sub maps
+    def coreSoftwareMeta = coreOutputMeta[(software)]  ?: [:]
+    def coreCommandMeta  = coreSoftwareMeta[(command)] ?: [:]
+    def coreBranchMeta   = coreCommandMeta[(branch)]   ?: [:]
+
+    // flatten nested leaf lists
+    def leafMetaNew = coreLeafMeta
+        .collectEntries { key, value ->
+            def valueNew = value instanceof List 
+                ? value.flatten() 
+                : value
+            return [(key): (valueNew)] }
+
+    // update OUTPUTS
+    def branchMetaNew   = coreBranchMeta   + leafMetaNew
+    def commandMetaNew  = coreCommandMeta  + [ (branch) : branchMetaNew ]
+    def softwareMetaNew = coreSoftwareMeta + [ (command) : commandMetaNew ]
+    def outputMetaNew   = coreOutputMeta   + [ (software) : softwareMetaNew ]
+
+    return outputMetaNew }
+
+
+
 def packMaps( infoList ){
 
     def subMaps = infoList
@@ -430,6 +466,7 @@ def packMaps( infoList ){
     return subMaps }
 
 
+// TO GO
 def updateOutputs( coreMeta, outputMeta ){
 
     // extract nested keys except leaf submap
@@ -447,6 +484,25 @@ def updateOutputs( coreMeta, outputMeta ){
             coreOutputs = updateNestPath(coreOutputs, outputMeta, pathList ) }
     
     return coreOutputs }
+
+
+
+def updateOutputsNEW( coreMeta, updateList ){
+
+    // initialise OUTPUTS
+    def outputMetaUpdate = coreMeta.OUTPUTS ?: [:]
+
+    // [ [SOFTWARE, COMMAND, BRANCH, TYPE], output ], ... ]
+    updateList 
+
+        // iterate submaps
+        .each{ pathList, leafObj ->
+
+            // update individual submaps
+            outputMetaUpdate = updateMap( outputMetaUpdate, pathList, leafObj ) }
+    
+    return outputMetaUpdate }
+
 
 
 
@@ -516,16 +572,18 @@ def viewMeta( mapObj, entryID = null, linkList = [], level = 0 ){
 
 
 
-def postStage( coreMeta, outputMeta ){
+def postStage( args ){
 
-    def runTagNew = [
-        coreMeta.RUN,
-        coreMeta.STAGING.LABEL.POST,
-        ]
-        .findAll() 
-        .join('.')
+    def coreMeta   = args.coreMeta
+    def updateList = args.updateList
+    def delimiter  = args.delimiter ?: '~'
 
-    def outputMetaNew = updateOutputs(coreMeta, outputMeta)
+    def runTagNew = makeTag(
+        tags      : [coreMeta.RUN, coreMeta.STAGING.LABEL.POST],
+        delimiter : delimiter,
+        )
+
+    def outputMetaNew = updateOutputsNEW(coreMeta, updateList)
     
     def coreMetaNew = coreMeta + [
         RUN     : runTagNew,

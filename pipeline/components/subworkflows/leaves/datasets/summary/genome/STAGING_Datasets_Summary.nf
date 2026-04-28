@@ -59,14 +59,14 @@ workflow STAGING {
 
                 | map { coreMeta, output ->
                     
-                    def outputMeta = [
-                        DATASETS : [
-                            SUMMARY : [ 
-                                (coreMeta.STAGING.BRANCH): [
-                                    main : output,
-                                    ] ] ] ]
+                    def updateList = [
+                        [['DATASETS', 'SUMMARY', coreMeta.STAGING.BRANCH, 'main'],  output],
+                        ]
 
-                    def coreMetaNew = postStage( coreMeta, outputMeta )
+                    def coreMetaNew = postStage( 
+                        coreMeta   : coreMeta,
+                        updateList : updateList,
+                        )
 
                     return coreMetaNew }
 
