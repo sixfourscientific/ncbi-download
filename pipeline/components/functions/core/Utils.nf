@@ -595,26 +595,6 @@ def postStage( args ){
 
 
 
-def splitOutputs( coreMeta, outputMeta, splitTag = null ) {
-
-    def runTagNew = [
-        coreMeta.RUN,
-        splitTag,
-        ]
-        .findAll() 
-        .join('.')
-
-    def outputMetaNew = updateOutputs(coreMeta, outputMeta)
-    
-    def coreMetaNew = coreMeta + [
-        RUN     : runTagNew,
-        OUTPUTS : outputMetaNew,
-        ] 
-
-    return coreMetaNew }
-
-
-
 def splitBatch( args ) {
 
     def coreMeta = args.coreMeta
