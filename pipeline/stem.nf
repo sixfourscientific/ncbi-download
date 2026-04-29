@@ -245,6 +245,7 @@ workflow {
 
                 return splitMetaList }
 
+
         // obtain supplementary taxonomy files (if provided)
         Taxonomy( Parameters, TAXONOMY )
 
@@ -372,7 +373,7 @@ workflow {
             
             return indexMetaNew }
 
-        Index = Fetch.out.Main.first().map{ coreMeta -> 
+        Index = Fetch.out.Main.take(1).map{ coreMeta -> 
 
             // N.B. general bridge using first element
 
