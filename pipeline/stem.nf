@@ -29,7 +29,7 @@ include {
     parseSupplementary as parseSupplementary;
     viewMeta as viewMeta;
     prepBridge as prepBridge;
-    splitBatch as splitBatch;
+    splitOutputs as splitOutputs;
     parseUrl as parseUrl;
     makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
@@ -230,9 +230,14 @@ workflow {
             | flatMap { coreMeta ->
 
                 def pathList = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
-                
-                def splitMetaList = splitBatch(
-                    coreMeta : coreMeta,
+
+                def coreMetaNew = coreMeta + [
+                    BATCH   : null,
+                    GROUPED : null,
+                    ]
+
+                def splitMetaList = splitOutputs(
+                    coreMeta : coreMetaNew,
                     pathList : pathList,
                     splitTag : 'SPLIT',
                     delimiter : '-',

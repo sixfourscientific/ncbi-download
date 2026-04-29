@@ -2,7 +2,7 @@
   "DEBUG": false,
   "PUBLISH": false,
   "BATCH":{
-    "BATCHSIZE":4
+    "BATCHSIZE":3
     },
   "CUSTOM": {
     "DOWNLOAD": {

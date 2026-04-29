@@ -595,7 +595,7 @@ def postStage( args ){
 
 
 
-def splitBatch( args ) {
+def splitOutputs( args ) {
 
     def coreMeta = args.coreMeta
     def pathList = args.pathList
@@ -626,16 +626,15 @@ def splitBatch( args ) {
                 delimiter : delimiter,
                 )
 
-            def entryList = [
+            def updateList = [
                 [ pathList, output ],
                 ]
 
-            def (outputMeta) = packMaps(entryList)
+            def outputMetaNew = updateOutputsNEW(coreMeta, updateList)
 
-            // should this be override or incorporate? provide options between these?
-            def splitMeta = [
+            def splitMeta = coreMeta + [
                 RUN     : runTagNew,
-                OUTPUTS : outputMeta,
+                OUTPUTS : outputMetaNew,
                 ]
 
             return splitMeta }
