@@ -576,7 +576,7 @@ def postStage( args ){
 
     def coreMeta   = args.coreMeta
     def updateList = args.updateList
-    def delimiter  = args.delimiter ?: '~'
+    def delimiter  = args.delimiter ?: '.'
 
     def runTagNew = makeTag(
         tags      : [coreMeta.RUN, coreMeta.STAGING.LABEL.POST],
