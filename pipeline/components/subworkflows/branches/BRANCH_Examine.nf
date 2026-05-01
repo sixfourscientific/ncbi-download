@@ -35,7 +35,7 @@ workflow SUBWORKFLOW {
             // examine individually
             | map { coreMeta ->
 
-                def queryID = coreMeta.id
+                def queryID = coreMeta.entry
                 def accession = coreMeta.report.accession
                     
                 // create accession entry
@@ -65,16 +65,17 @@ workflow SUBWORKFLOW {
                         def mappedList = accessionMap[accession]
                             .sort{ label1, label2 -> label2 <=> label1 }
 
-                        // identify first id mapped to accession
-                        def idFirst = mappedList.first()
+                        // identify first entry mapped to accession
+                        def entryFirst = mappedList.first()
 
-                        // check id mapped order
-                        def mappedPriority = idFirst.equals(coreMeta.id)
+                        // check entry mapped order
+                        def mappedPriority = entryFirst.equals(coreMeta.entry)
 
                         // count accession mappings to identify duplicated
                         def mappedCount = mappedList.size()
 
                         def coreMetaNew = coreMeta + [
+                            TAG      : null, // negates race condition later at filter
                             mapped   : mappedCount,
                             PRIORITY : mappedPriority, 
                             ]

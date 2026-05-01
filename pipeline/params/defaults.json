@@ -48,22 +48,34 @@
         "CONFIG": {
           "VERSION": [],
           "LABEL": {
-            "INCLUDE": false,
+            "INCLUDE": true,
             "SOFTWARE": null,
             "PRE": null,
             "POST": null,
-            "ALIASES": {}
+            "ALIASES": {
+              "--annotated"        : "ann",
+              "--as-json-lines"    : null,
+              "--assembly-source"  : "src",
+              "--assembly-level"   : "lvl",
+              "complete"           : "cmp",
+              "chromosome"         : "chr",
+              "scaffold"           : "scf",
+              "contig"             : "ctg",
+              "--limit"            : "lmt",
+              "exclude"            : "exc",
+              "--reference"        : "ref",
+              "--exclude-atypical" : "exc-aty"
+              }
           },
           "ARGS": {
             "CORE": {
-              "--annotated": false,
-              "--as-json-lines": true,
-              "--assembly-level": "complete,chromosome,scaffold",
-              "--assembly-source": "refseq",
-              "--exclude-atypical": true,
-              "--limit": "all",
-              "--mag": "exclude",
-              "--reference": true
+              "--annotated"       : false,
+              "--as-json-lines"   : true,
+              "--assembly-level"  : "complete,chromosome,scaffold",
+              "--assembly-source" : "refseq",
+              "--limit"           : "all",
+              "--mag"             : "exclude",
+              "--reference"       : true
             },
             "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Summary_Query.tsv"
           }

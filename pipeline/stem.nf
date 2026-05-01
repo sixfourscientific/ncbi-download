@@ -106,25 +106,25 @@ workflow {
 
         println('PARSING INPUTS...')
 
-        // SAMPLES
+        // MAIN
 
-        def InputMeta = (params.INPUT?.SAMPLES ?: [:]) + [
+        def InputMeta = (params.INPUT?.MAIN ?: [:]) + [
             INFO     : params.inputs,
-            INFO_ID  : "SAMPLES",
+            TYPE     : "TARGETS",
+            DETAILED : true,
+            ID_FIELD : ['taxon','accession'],
             ]
 
         Inputs = ParseInfo( InputMeta )
-            
+
             | map { coreMeta ->
 
-                def (entry) = coreMeta.entrySet()
-                
-                def runTag = entry.value.toString().replaceAll( "\\s", "_" )
-                
+                def (entryType) = coreMeta.INFO.FIELDS
+
                 def coreMetaNew = [
-                    RUN  : runTag,
-                    id   : entry.value,
-                    type : entry.key,
+                    ID    : coreMeta.ID,
+                    entry : coreMeta[(entryType)],
+                    type  : entryType,
                     ]
 
                 return coreMetaNew }
@@ -133,25 +133,26 @@ workflow {
 
         def TaxonomyMeta = [
             INFO     : params.TAXONOMY,
-            ID       : "TAXONOMY",
+            TYPE     : "TAXONOMY",
             ]
 
         TAXONOMY = ParseInfo( TaxonomyMeta ) 
 
-            | filter{ coreMeta -> coreMeta }
+            // remove empty map (when no taxonomy provided)
+            | filter { coreMeta -> coreMeta }
         
-            // create custom run tag from parsed url
+            // create custom tag from parsed url
             | map { coreMeta ->
 
                 def urlList = parseUrl(coreMeta['url'])
 
-                def urlTag = makeTag(
+                def entryID = makeTag(
                     tags      : urlList,
                     delimiter : '-',
                     )
 
                 def coreMetaNew = coreMeta + [
-                    RUN : urlTag,
+                    ID : entryID,
                     ]
 
                 return coreMetaNew }
@@ -160,7 +161,7 @@ workflow {
 
         def BatchMeta = (params.BATCH ?: [:]) + [
             NAME      : 'downloads',
-            TARGETS   : [['id'],['report','accession']],
+            TARGETS   : [['entry'],['report','accession']],
             HEADER    : false,
             VERBOSE   : false,
             ]
@@ -192,12 +193,12 @@ workflow {
 
         // group accessions
         Grouped = Filter.out.Main
-            
+
             // sort by (i) queryID & (ii) accession
             | toSortedList { coreMeta1, coreMeta2 ->  
 
                 // smallest -> largest
-                coreMeta1.id               <=> coreMeta2.id
+                coreMeta1.entry            <=> coreMeta2.entry
                 ?:
                 // smallest -> largest
                 coreMeta1.report.accession <=> coreMeta2.report.accession }
@@ -251,8 +252,6 @@ workflow {
 
         ////BRANCH_RUN////
 
-    /*
-    */
 
 
     publish: 

@@ -1,4 +1,9 @@
 
+include { 
+    makeTag as makeTag;
+    } from "$params.importMap.functions/core/Utils"
+
+
 def initDefaults( json ){
 
     def jsonSlurper = new groovy.json.JsonSlurper()
@@ -209,25 +214,37 @@ def parseInfo( args ){
                 // create entry store
                 ValidatedInfo.putAt( idxRow, [:] )
 
-                // check run field
-                if ( infoMap.RUN_ID ) {
-
-                    assert entry.containsKey(infoMap.RUN_ID),
-                        "Row ${idxRow}: \"$infoMap.RUN_ID\" field not found; unable to initialise run ID."
-
-                   }
-
-                // store run id & info fields
+                // store entry id & info fields
                 if ( infoMap.DETAILED == true ) {
 
-                    // initialise run id
-                    def runID = infoMap.RUN_ID 
-                        ? entry[(infoMap.RUN_ID)]
-                        : "run$idxRow"
+                    def idFieldList = infoMap.ID_FIELD instanceof List
+                        ?  infoMap.ID_FIELD
+                        : [infoMap.ID_FIELD]
 
-                    ValidatedInfo[idxRow].putAt( 'RUN', runID ) 
+                    // check entry id field
+                    if ( infoMap.ID_FIELD ) {
 
-                    def fieldList = entry
+                        assert idFieldList.any{ field -> entry.containsKey(field) }:
+                            "Row ${idxRow}: \"$infoMap.ID_FIELD\" field not found; unable to initialise entry ID."
+
+                    }
+
+                    // initialise entry id
+                    def entryTag = infoMap.ID_FIELD 
+                        ? makeTag(
+                            tags      : idFieldList.collect{ field -> entry[(field)] },
+                            delimiter : '-',
+                            )
+                        : "entry$idxRow"
+
+                    // remove any spaces
+                    def entryID = entryTag
+                        .toString()
+                        .replaceAll( "\\s", "_" )
+
+                    ValidatedInfo[idxRow].putAt( 'ID', entryID ) 
+
+                    def fullFieldList = entry
                         .keySet()
                         .collect()
                         // exclude intermediate & run fields
@@ -235,7 +252,7 @@ def parseInfo( args ){
                             !key.endsWith(".$params.intTag") && !key.equals('run')}
                     
                     // store original fields
-                    ValidatedInfo[idxRow].putAt( 'INFO', [FIELDS : fieldList] )
+                    ValidatedInfo[idxRow].putAt( 'INFO', [FIELDS : fullFieldList, TYPE : infoMap.TYPE] )
 
                     }
 

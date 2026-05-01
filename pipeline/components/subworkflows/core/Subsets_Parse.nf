@@ -31,7 +31,7 @@ workflow Subsets_Parse {
                     batch   : groupMeta.BATCH,
                     grouped : groupMeta.GROUPED,
                     )
-            
+
                 return subsetList }
         
         | set { Subsets }
@@ -113,7 +113,7 @@ workflow Subsets_Parse {
 
                     def (filePath) = nonMetaList
 
-                    def runTag = makeTag(
+                    def idNew = makeTag(
                         tags      : [ subsetMeta.BATCH.NAME, 'BATCH', subsetMeta.BATCH.INDEX ], 
                         delimiter : '-',
                         )
@@ -123,7 +123,7 @@ workflow Subsets_Parse {
                         ]
 
                     def subsetMetaNew = subsetMeta + [
-                        RUN   : runTag,
+                        ID    : idNew,
                         BATCH : batchMeta,
                         ]
 

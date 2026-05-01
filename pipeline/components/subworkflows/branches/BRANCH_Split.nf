@@ -33,7 +33,7 @@ workflow SUBWORKFLOW {
 
 
         | flatMap { coreMeta ->
-        
+
             def (SOFTWARE, COMMAND, BRANCH, type) = [ "CUSTOM", "TABULATE", "FORMAT", "main" ]
 
             def splitMetaList = coreMeta.OUTPUTS[(SOFTWARE)][(COMMAND)][(BRANCH)][(type)]
@@ -52,14 +52,14 @@ workflow SUBWORKFLOW {
 
                     def idxTag = idx+1
 
-                    def runTagNew = makeTag(
-                        tags      : [ coreMeta.RUN, idxTag, ],
+                    def idNew = makeTag(
+                        tags      : [ coreMeta.ID, idxTag, ],
                         delimiter : '-',
                         )
 
                     // store record number & report info
                     def splitMeta = coreMeta + [
-                        RUN     : runTagNew,
+                        ID      : idNew,
                         record  : idxTag,
                      // report  : entry,
                         report  : [ accession : entry.accession ], // simplified report info

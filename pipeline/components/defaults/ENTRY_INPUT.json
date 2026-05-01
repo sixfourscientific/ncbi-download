@@ -1,8 +1,8 @@
 {
   "INFO"       : null,
-  "INFO_ID"    : null,
+  "TYPE"       : null,
   "DETAILED"   : false,
-  "RUN_ID"     : null,
+  "ID_FIELD"   : null,
   "UNIQUE"     : [],
   "EXISTS"     : [],
   "CONTENTS"   : [],

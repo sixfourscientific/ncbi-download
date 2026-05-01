@@ -106,7 +106,7 @@ def prepBridge( args ){
     // new header
     if ( !updateIndex && !interimIndex ) {
     
-        def runMap = basicIndex ? [:] : [run  : coreMeta.RUN ]
+        def runMap = basicIndex ? [:] : [run  : "$coreMeta.ID-$coreMeta.TAG" ]
 
         indexMetaNew.putAll( runMap + indexMeta ) }
 
@@ -117,10 +117,10 @@ def prepBridge( args ){
         def fieldMeta = coreMeta.INFO.FIELDS
 
             .collectEntries { key ->
-                def field = key.equals('name')
-                    ? 'RUN' // updated; use run for name field
-                    : key   // original
-                return  [ (key) : coreMeta[field] ] }
+                def value = key.equals('id')
+                    ? "$coreMeta.ID-$coreMeta.TAG" // updated; include tag in id field
+                    : coreMeta[key]   // original
+                return  [ (key) : value ] }
 
         // original fields including updates
         if ( !interimIndex ) {
@@ -237,11 +237,23 @@ def formatTags( CONFIG ){
                         .replaceFirst('^-+', '')
                         .toLowerCase()
 
+                    // split parameter as required
+                    def paremeterList = parameter instanceof String
+                        ? parameter.toString().tokenize(',')
+                        : [parameter]
+
                     // reformat parameter
-                    def parameterTag = checkAlias(parameter, CONFIG.LABEL.ALIASES)
-                        .toString()
-                        .replace(' ','')
-                        .capitalize()
+                    def parameterTagList = paremeterList
+
+                        .collect{ value -> 
+                            
+                            checkAlias(value, CONFIG.LABEL.ALIASES)
+                                .toString()
+                                .replace(' ','')
+                                .capitalize() }
+
+                    def parameterTag = parameterTagList
+                        .join('')
 
                     // argument tag (OPTIONAL)
                     def tag = "${flagTag}${parameterTag}"
@@ -261,17 +273,21 @@ def formatTags( CONFIG ){
 
 
 
-def preStage( coreMeta, configMeta ){
+def preStage( args ){
 
-    def runTagNew = [
-        coreMeta.RUN,
-        *formatTags(configMeta),
-        ]
-        .findAll() 
-        .join('.')
+    def coreMeta     = args.coreMeta
+    def configMeta   = args.configMeta
+    def tagDelimiter = args.tagDelimiter
+    def tagDefault   = args.tagDefault
+
+    def tagNew = makeTag(
+        tags      : [coreMeta.TAG, *formatTags(configMeta)],
+        delimiter : tagDelimiter,
+        default   : tagDefault,
+        )
 
     def coreMetaNew = coreMeta + [
-        RUN     : runTagNew,
+        TAG     : tagNew,
         STAGING : configMeta,
         ]
 
@@ -574,19 +590,21 @@ def viewMeta( mapObj, entryID = null, linkList = [], level = 0 ){
 
 def postStage( args ){
 
-    def coreMeta   = args.coreMeta
-    def updateList = args.updateList
-    def delimiter  = args.delimiter ?: '.'
+    def coreMeta     = args.coreMeta
+    def updateList   = args.updateList
+    def tagDelimiter = args.tagDelimiter
+    def tagDefault   = args.tagDefault
 
-    def runTagNew = makeTag(
-        tags      : [coreMeta.RUN, coreMeta.STAGING.LABEL.POST],
-        delimiter : delimiter,
+    def tagNew = makeTag(
+        tags      : [coreMeta.TAG, coreMeta.STAGING.LABEL.POST],
+        delimiter : tagDelimiter,
+        default   : tagDefault,
         )
 
     def outputMetaNew = updateOutputsNEW(coreMeta, updateList)
     
     def coreMetaNew = coreMeta + [
-        RUN     : runTagNew,
+        TAG     : tagNew,
         STAGING : null,
         OUTPUTS : outputMetaNew,
         ] 
@@ -621,9 +639,10 @@ def splitOutputs( args ) {
 
         .collect { output, idx ->
 
-            def runTagNew = makeTag(
-                tags      : [coreMeta.RUN, splitTag, idx+1],
+            def tagNew = makeTag(
+                tags      : [coreMeta.TAG, splitTag, idx+1],
                 delimiter : delimiter,
+                default   : null,
                 )
 
             def updateList = [
@@ -633,7 +652,7 @@ def splitOutputs( args ) {
             def outputMetaNew = updateOutputsNEW(coreMeta, updateList)
 
             def splitMeta = coreMeta + [
-                RUN     : runTagNew,
+                TAG     : tagNew,
                 OUTPUTS : outputMetaNew,
                 ]
 
@@ -662,7 +681,7 @@ def groupOutputs( coreMeta, outputMeta, groupKey ){
     
     def coreMetaNew = coreMeta + [
         name    : groupKey,
-        RUN     : groupKey,
+        TAG     : groupKey,
         OUTPUTS : outputMetaNew,
         ] 
 
@@ -753,16 +772,19 @@ def formatBasepairs (value) {
 
 def makeTag( args ){
     
-    def tagList   = args.tags
-    def delimiter = args.delimiter ?: '.'
-    
-    def tag = tagList
+    def tagList    = args.tags
+    def delimiter  = args.delimiter ?: '.'
+    def tagDefault = args.default   ?: null
+
+    def tagNew = tagList
         // remove null
         .findAll()
         // join tags
         .join(delimiter)
 
-    return tag }
+    def tagFinal = tagNew ?: tagDefault
+
+    return tagFinal }
 
 
 

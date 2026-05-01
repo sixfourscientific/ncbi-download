@@ -1,13 +1,14 @@
 
 include { 
     formatArguments as formatArguments;
+    makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
 
 process MODULE {
 
     // SETUP
 
-    tag "$CoreMeta.RUN"
+    tag "$task.ext.tag"
 
     label workflow.profile in params.profileLabels 
         ? workflow.profile.toUpperCase()
@@ -15,7 +16,16 @@ process MODULE {
 
     // EXTRA
 
-    ext version : {
+    ext tag : {
+    
+        def tag = makeTag(
+            tags      : [ CoreMeta.ID, CoreMeta.TAG ],
+            delimiter :'-',
+            )
+    
+        return tag },
+
+    version : {
 
             def version = CoreMeta.STAGING.VERSION
 

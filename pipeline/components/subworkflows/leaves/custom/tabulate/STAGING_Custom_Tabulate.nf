@@ -31,7 +31,12 @@ workflow STAGING {
 
                 | map { coreMeta, configMeta ->
 
-                    def coreMetaNew  = preStage( coreMeta, configMeta )
+                    def coreMetaNew  = preStage( 
+                        coreMeta     : coreMeta, 
+                        configMeta   : configMeta,
+                        tagDelimiter : null,
+                        tagDefault   : null,
+                        )
 
                     return coreMetaNew }
 
@@ -64,8 +69,10 @@ workflow STAGING {
                         ]
 
                     def coreMetaNew = postStage( 
-                        coreMeta   : coreMeta,
-                        updateList : updateList,
+                        coreMeta     : coreMeta,
+                        updateList   : updateList,
+                        tagDelimiter : null,
+                        tagDefault   : null,
                         )
 
                     return coreMetaNew }
