@@ -87,11 +87,17 @@
         "CONFIG": {
           "VERSION": [],
           "LABEL": {
-            "INCLUDE": false,
-            "SOFTWARE": null,
+            "INCLUDE": true,
+            "SOFTWARE": "archive",
             "PRE": null,
             "POST": null,
-            "ALIASES": {}
+            "ALIASES": {
+              "--no-progressbar" : null,
+              "--include"        : "inc",
+              "protein"          : "pro",
+              "genome"           : "gen",
+              "seq-report"       : "seq"
+            }
           },
           "ARGS": {
             "CORE": {

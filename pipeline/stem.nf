@@ -173,6 +173,9 @@ workflow {
         
         // BRANCH( Inputs|BRANCH.out.Main)
 
+
+        // QUERY
+
         // obtain datasets summary
         Query( Parameters, Inputs | filter { RUN_QUERY || RUN_FETCH }  )
 
@@ -190,6 +193,9 @@ workflow {
 
         // filter accessions according to criteria
         Filter( Parameters, Examine.out.Main )
+
+
+        // FETCH
 
         // group accessions
         Grouped = Filter.out.Main
@@ -245,6 +251,7 @@ workflow {
                     )
 
                 return splitMetaList }
+
 
 
         // obtain supplementary taxonomy files (if provided)
