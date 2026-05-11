@@ -241,16 +241,29 @@ workflow {
                 def coreMetaNew = coreMeta + [
                     BATCH   : null,
                     GROUPED : null,
+                    ID      : null,
                     ]
 
                 def splitMetaList = splitOutputs(
-                    coreMeta : coreMetaNew,
-                    pathList : pathList,
-                    splitTag : 'SPLIT',
+                    coreMeta  : coreMetaNew,
+                    pathList  : pathList,
+                    splitTag  : null,
                     delimiter : '-',
+                    index     : false,
                     )
 
                 return splitMetaList }
+
+        | map { coreMeta ->
+
+            def archiveTag = file(coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main)
+                .getBaseName()
+
+            def coreMetaNew = coreMeta + [
+                ID : archiveTag,
+                ]
+
+            return coreMetaNew }
 
 
 
@@ -264,7 +277,7 @@ workflow {
     publish: 
     
         Query = Query.out.Main.map{ coreMeta -> 
-        
+
             def indexMeta = [:]
             
             def indexMetaNew = prepBridge( 
@@ -293,7 +306,11 @@ workflow {
 
         Format = Format.out.Main.map{ coreMeta -> 
 
-            def indexMeta = [:]
+            def indexMeta = [
+                results : coreMeta.total,
+                summary : coreMeta.OUTPUTS.DATASETS.SUMMARY.QUERY.main,
+                table   : coreMeta.OUTPUTS.CUSTOM.TABULATE.FORMAT.main,
+                ]
             
             def indexMetaNew = prepBridge( 
                 coreMeta  : coreMeta, 
@@ -302,11 +319,11 @@ workflow {
                 UPDATE    : false, 
                 INTERIM   : false,
                 )      
-            
+
             return indexMetaNew }
 
         Split = Split.out.Main.map{ coreMeta -> 
-        
+
             def indexMeta = [:]
             
             def indexMetaNew = prepBridge( 
@@ -320,8 +337,11 @@ workflow {
             return indexMetaNew }
 
         Examine = Examine.out.Main.map{ coreMeta -> 
-        
-            def indexMeta = [:]
+
+            def indexMeta = [
+                accession : coreMeta.report.accession,
+                PRIORIRTY : coreMeta.PRIORITY,
+                ]
             
             def indexMetaNew = prepBridge( 
                 coreMeta  : coreMeta, 
@@ -344,7 +364,7 @@ workflow {
                 UPDATE    : false, 
                 INTERIM   : false,
                 )      
-            
+
             return indexMetaNew }
 
         Fetch = Archives.map{ coreMeta -> 
@@ -356,7 +376,7 @@ workflow {
             def indexMetaNew = prepBridge( 
                 coreMeta  : coreMeta, 
                 indexMeta : indexMeta, 
-                BASIC     : true, 
+                BASIC     : false, 
                 UPDATE    : false, 
                 INTERIM   : false,
                 )      
@@ -379,7 +399,7 @@ workflow {
             
             return indexMetaNew }
 
-        Index = Fetch.out.Main.take(1).map{ coreMeta -> 
+        Main = Archives.unique{ coreMeta -> coreMeta.TAG }.map{ coreMeta -> 
 
             // N.B. general bridge using first element
 
@@ -388,8 +408,10 @@ workflow {
                 : 'NA'
             
             def indexMeta = [
-                datasets: "${workflow.outputDir}/$datasetsSubdir",
-                taxonomy: taxonomySubdir,
+                ID       : 'datasets',
+                TAG      : coreMeta.TAG,
+                datasets : "${workflow.outputDir}/$datasetsSubdir/$coreMeta.TAG",
+                taxonomy : taxonomySubdir,
                 ]
             
             def indexMetaNew = prepBridge( 
@@ -439,14 +461,14 @@ output {
             }
 
         Format { 
-            enabled      false
+            enabled      true
             mode         'copy'
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "format/$indexMeta.run" }
+                return "query/$indexMeta.run" }
             index {
-                path   'bridge-format.csv'
+                path   'bridge-query-summaries.csv'
                 header true
                 sep    '\t'
                 }
@@ -467,14 +489,14 @@ output {
             }
 
         Examine { 
-            enabled      false
+            enabled      true
             mode         'copy'
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "examine/$indexMeta.run" }
+                return "query/$indexMeta.run/split" }
             index {
-                path   'bridge-examine.csv'
+                path   'bridge-query-accessions.csv'
                 header true
                 sep    '\t'
                 }
@@ -500,10 +522,10 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                indexMeta.files >> "$datasetsSubdir/" 
+                indexMeta.files >> "$datasetsSubdir/$indexMeta.TAG/" 
                 }
             index {
-                path   'bridge-datasets.csv'
+                path   'bridge-fetch-datasets.csv'
                 header true
                 sep    '\t'
                 }
@@ -526,7 +548,7 @@ output {
             }
 
         // publish index without files (recorded as single directory)
-        Index { 
+        Main { 
             enabled      true
             mode         'copy'
             overwrite    'standard'

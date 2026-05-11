@@ -49,7 +49,7 @@
           "VERSION": [],
           "LABEL": {
             "INCLUDE": true,
-            "SOFTWARE": null,
+            "SOFTWARE": "query",
             "PRE": null,
             "POST": null,
             "ALIASES": {
@@ -88,7 +88,7 @@
           "VERSION": [],
           "LABEL": {
             "INCLUDE": true,
-            "SOFTWARE": "archive",
+            "SOFTWARE": "fetch",
             "PRE": null,
             "POST": null,
             "ALIASES": {

@@ -103,10 +103,17 @@ def prepBridge( args ){
     def updateIndex = args.UPDATE
     def interimIndex = args.INTERIM
 
+    def infoMap = [ 
+        ID  : coreMeta.ID,
+        TAG : coreMeta.TAG,
+        ] 
+
     // new header
     if ( !updateIndex && !interimIndex ) {
     
-        def runMap = basicIndex ? [:] : [run  : "$coreMeta.ID-$coreMeta.TAG" ]
+        def runMap = basicIndex 
+            ? [:]
+            : infoMap
 
         indexMetaNew.putAll( runMap + indexMeta ) }
 
@@ -619,6 +626,7 @@ def splitOutputs( args ) {
     def pathList = args.pathList
     def splitTag = args.splitTag
     def delimiter = args.delimiter
+    def index     = args.index
     
     // extract grouped values via sub path 
     def pathValues = pathList
@@ -639,8 +647,10 @@ def splitOutputs( args ) {
 
         .collect { output, idx ->
 
+            def idxTag = index ? idx+1 : null
+
             def tagNew = makeTag(
-                tags      : [coreMeta.TAG, splitTag, idx+1],
+                tags      : [coreMeta.TAG, splitTag, idxTag],
                 delimiter : delimiter,
                 default   : null,
                 )
