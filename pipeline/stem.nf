@@ -215,34 +215,6 @@ workflow {
 
     publish: 
     
-        Query = Query.out.Main.map{ coreMeta -> 
-
-            def indexMeta = [:]
-            
-            def indexMetaNew = prepBridge( 
-                coreMeta  : coreMeta, 
-                indexMeta : indexMeta, 
-                BASIC     : false, 
-                UPDATE    : false, 
-                INTERIM   : false,
-                )      
-            
-            return indexMetaNew }
-
-        Count = Count.out.Main.map{ coreMeta -> 
-        
-            def indexMeta = [:]
-            
-            def indexMetaNew = prepBridge( 
-                coreMeta  : coreMeta, 
-                indexMeta : indexMeta, 
-                BASIC     : false, 
-                UPDATE    : false, 
-                INTERIM   : false,
-                )      
-            
-            return indexMetaNew }
-
         Format = Format.out.Main.map{ coreMeta -> 
 
             def indexMeta = [
@@ -261,20 +233,6 @@ workflow {
 
             return indexMetaNew }
 
-        Split = Split.out.Main.map{ coreMeta -> 
-
-            def indexMeta = [:]
-            
-            def indexMetaNew = prepBridge( 
-                coreMeta  : coreMeta, 
-                indexMeta : indexMeta, 
-                BASIC     : false, 
-                UPDATE    : false, 
-                INTERIM   : false,
-                )      
-            
-            return indexMetaNew }
-
         Examine = Examine.out.Main.map{ coreMeta -> 
 
             def indexMeta = [
@@ -290,20 +248,6 @@ workflow {
                 INTERIM   : false,
                 )      
             
-            return indexMetaNew }
-
-        Filter = Filter.out.Main.map{ coreMeta -> 
-        
-            def indexMeta = [:]
-            
-            def indexMetaNew = prepBridge( 
-                coreMeta  : coreMeta, 
-                indexMeta : indexMeta, 
-                BASIC     : false, 
-                UPDATE    : false, 
-                INTERIM   : false,
-                )      
-
             return indexMetaNew }
 
         Fetch = Divide.out.Main.map{ coreMeta -> 
@@ -363,69 +307,12 @@ workflow {
             
             return indexMetaNew }
 
-
-        Collect = Collect.out.Main.map{ coreMeta -> 
-        
-            def indexMeta = [:]
-            
-            def indexMetaNew = prepBridge( 
-                coreMeta  : coreMeta, 
-                indexMeta : indexMeta, 
-                BASIC     : false, 
-                UPDATE    : false, 
-                INTERIM   : false,
-                )      
-            
-            return indexMetaNew }
-
-        Divide = Divide.out.Main.map{ coreMeta -> 
-        
-            def indexMeta = [:]
-            
-            def indexMetaNew = prepBridge( 
-                coreMeta  : coreMeta, 
-                indexMeta : indexMeta, 
-                BASIC     : false, 
-                UPDATE    : false, 
-                INTERIM   : false,
-                )      
-            
-            return indexMetaNew }
-
         ////BRANCH_PUBLISH////
 
     }
 
 
 output {
-
-        Query { 
-            enabled      false
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            path { indexMeta -> 
-                return "query/$indexMeta.run" }
-            index {
-                path   'bridge-query.csv'
-                header true
-                sep    '\t'
-                }
-            }
-
-        Count { 
-            enabled      false
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            path { indexMeta -> 
-                return "count/$indexMeta.run" }
-            index {
-                path   'bridge-count.csv'
-                header true
-                sep    '\t'
-                }
-            }
 
         Format { 
             enabled      true
@@ -441,20 +328,6 @@ output {
                 }
             }
 
-        Split { 
-            enabled      false
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            path { indexMeta -> 
-                return "split/$indexMeta.run" }
-            index {
-                path   'bridge-split.csv'
-                header true
-                sep    '\t'
-                }
-            }
-
         Examine { 
             enabled      true
             mode         'copy'
@@ -464,20 +337,6 @@ output {
                 return "query/$indexMeta.run/split" }
             index {
                 path   'bridge-query-accessions.csv'
-                header true
-                sep    '\t'
-                }
-            }
-
-        Filter { 
-            enabled      false
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            path { indexMeta -> 
-                return "filter/$indexMeta.run" }
-            index {
-                path   'bridge-filter.csv'
                 header true
                 sep    '\t'
                 }
@@ -522,34 +381,6 @@ output {
             ignoreErrors false
             index {
                 path   'bridge-main.csv'
-                header true
-                sep    '\t'
-                }
-            }
-
-        Collect { 
-            enabled      false
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            path { indexMeta -> 
-                return "collect/$indexMeta.run" }
-            index {
-                path   'bridge-collect.csv'
-                header true
-                sep    '\t'
-                }
-            }
-
-        Divide { 
-            enabled      false
-            mode         'copy'
-            overwrite    'standard'
-            ignoreErrors false
-            path { indexMeta -> 
-                return "divide/$indexMeta.run" }
-            index {
-                path   'bridge-divide.csv'
                 header true
                 sep    '\t'
                 }
