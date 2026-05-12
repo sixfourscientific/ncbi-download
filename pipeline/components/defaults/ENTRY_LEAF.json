@@ -2,7 +2,7 @@
   "VERSION" : [],
   "LABEL"   : {
     "INCLUDE"  : true,
-    "SOFTWARE" : null,
+    "MODULE" : null,
     "PRE"      : null,
     "POST"     : null,
     "ALIASES"  : {}

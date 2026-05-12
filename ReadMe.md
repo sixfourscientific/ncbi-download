@@ -15,13 +15,13 @@ A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
 ```
 
 
-## Commands
+## Workflow Command Argments
 
 ```--execute```
 
-```Query```: Obtain assembly summary information from ncbi
+```Query```: obtain assembly summary information from ncbi
 
-```Fetch```: Query & download individual assemblies from ncbi
+```Fetch```: execute Query & then download individual assemblies from ncbi
 
 ```--inputs```
 
@@ -87,66 +87,105 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 ```
 
 
-## Configuration
+## Further Configuration
 
-Each process can be configured via the ```params-file``` by supplying information in the relevant nested object for a corresponding ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
+### Processes
+
+Individual processes can be configured via the ```params-file``` by supplying information in the ```CONFIG``` block of the corresponding nested object for a ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
+
+*params-file.json*
 
 ```
 "SOFTWARE": {
-	"COMMAND": {
-		"BRANCH": {
-			"CONFIG": {
-          		"VERSION": [],
-				"LABEL": {
-					"INCLUDE"  : true,
-					"SOFTWARE" : null,
-					"PRE"      : null,
-					"POST"     : null,
-					"ALIASES"  : {}
-					},
-          		"ARGS": {
-            		"CORE"  : {},
-            		"SWEEP" : "/path/to/SweepInfo.tsv"
-          			}
-				}
-			}
-		}
-	}
+   "COMMAND": {
+      "BRANCH": {
+         "CONFIG": {
+            "VERSION": [],
+            "LABEL": {
+               "INCLUDE" : true,
+               "MODULE " : null,
+               "PRE"     : null,
+               "POST"    : null,
+               "ALIASES" : {}
+               },
+            "ARGS": {
+               "CORE"  : {},
+               "SWEEP" : [{},{}]
+               }
+            }
+         }
+      }
+   }
 ```
 
+#### Command Arguments
 
-### Arguments
+Where appropriate, arguments can be provided for a proccess via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. 
 
-Arguments can be provided via the ```ARGS``` block where ```CORE``` arguments are applied to all instances & ```SWEEP``` arguments create seperate instances for each list of arguments. Flags & arguments should be provided as strings just as they would have been for the actual command including any preciding dashes whilst switches (i.e. flags without parameters) can be supplied/removed using using the appropriate boolean parameter e.g.
+If the same argument is provided to both blocks then those within the ```SWEEP``` block takes priority. 
+
+Flags & paraemeters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preciding dashes) whilst switches (i.e. flags without parameters) can be eitehr supplied or removed by providing an appropriate boolean parameter e.g.
+
+*params-file.json*
 
 ```
 "ARGS": {
-	"CORE"  :  { "--flagA : "parameterX" },
-	"SWEEP" :[ 
-		{ "--flagB : "parameterY", "--flagC" : true  }, 
-		{ "--flagB : "parameterZ", "--flagC" : false }
-		]
-	}
+   "CORE"  :  { "--flagA : "parameterX" },
+   "SWEEP" :[ 
+      { "--flagB : "parameterY", "--flagC" : true  }, 
+      { "--flagB : "parameterZ", "--flagC" : false }
+      ]
+   }
 ```
 
-The above would run the process twice for a single input e.g. 
+In the above example the process would run twice for a single input with the following command line arguments: 
 
-Instance 1 
+#### Instance 1 
 
 ```
 SOFTWARE COMMAND --flagA parameterX --flagB paremeterY --flagC INPUT1
 ```
 
-Instance 2
+#### Instance 2
 
 ```
 SOFTWARE COMMAND --flagA parameterX --flagB paremeterZ INPUT1
 ```
 
-If the same argument is provided to both argument blocks then the ```SWEEP``` argument takes priority. ```SWEEP``` arguments can also be provided as a tab delimited list e.g.
+It is also possible to provide```SWEEP``` arguments as a tab delimited list by providing a path to this file in place of the submap list e.g.
+
+*SweepInfo.tsv*
 
 ```
 ---flagB	--flagC
 parameterY	true
 parameterZ	false
 ```
+
+*params-file.json*
+
+```
+"ARGS": {
+   "CORE"  : { "--flagA : "parameterX" },
+   "SWEEP" : "/path/to/SweepInfo.tsv"
+   }
+```
+
+Example arguments can be found within the defaults.json file. In this workflow the configurable module blocks are as follows:
+
+```
+"DATASETS": {
+   "SUMMARY": {
+      "QUERY": {
+         "CONFIG": {},
+         }
+      },
+   "DOWNLOAD": {
+      "FETCH": {
+         "CONFIG": {},
+         }
+      }
+   }
+```
+
+
