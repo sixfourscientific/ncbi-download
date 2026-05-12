@@ -117,11 +117,11 @@ Each process can be configured via the ```params-file``` by supplying informatio
 
 ### Arguments
 
-Arguments can be provided via the ```ARGS``` block where ```CORE``` arguments are applied to all instances & ```SWEEP``` arguments create seperate instances for each list of arguments. Flags & arguments should be strins provided as they would have been to the actual command including any preciding dashes whilst switches (i.e. flags without parameters) can be supplied/removed using using the appropriate boolean parameter  e.g.
+Arguments can be provided via the ```ARGS``` block where ```CORE``` arguments are applied to all instances & ```SWEEP``` arguments create seperate instances for each list of arguments. Flags & arguments should be provided as strings just as they would have been for the actual command including any preciding dashes whilst switches (i.e. flags without parameters) can be supplied/removed using using the appropriate boolean parameter e.g.
 
 ```
 "ARGS": {
-	"CORE"  :  { "--flagA : "parameterX"},
+	"CORE"  :  { "--flagA : "parameterX" },
 	"SWEEP" :[ 
 		{ "--flagB : "parameterY", "--flagC" : true  }, 
 		{ "--flagB : "parameterZ", "--flagC" : false }
@@ -129,7 +129,7 @@ Arguments can be provided via the ```ARGS``` block where ```CORE``` arguments ar
 	}
 ```
 
-The above would run the process twice for each input e.g. 
+The above would run the process twice for a single input e.g. 
 
 Instance 1 
 
@@ -143,4 +143,10 @@ Instance 2
 SOFTWARE COMMAND --flagA parameterX --flagB paremeterZ INPUT1
 ```
 
-If the same argument is provided to both argument blocks then the ```SWEEP``` argument takes priority. 
+If the same argument is provided to both argument blocks then the ```SWEEP``` argument takes priority. ```SWEEP``` arguments can also be provided as a tab delimited list e.g.
+
+```
+---flagB	--flagC
+parameterY	true
+parameterZ	false
+```
