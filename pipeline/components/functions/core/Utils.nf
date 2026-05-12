@@ -201,13 +201,13 @@ def formatTags( CONFIG ){
 
         return updated }
 
-    // software tag (OPTIONAL)
-    def softwareTag = !CONFIG.LABEL.SOFTWARE 
+    // module tag (OPTIONAL)
+    def moduleTag = !CONFIG.LABEL.MODULE 
         ? null
-        : checkAlias(CONFIG.LABEL.SOFTWARE, CONFIG.LABEL.ALIASES)
+        : checkAlias(CONFIG.LABEL.MODULE, CONFIG.LABEL.ALIASES)
 
     // version tag (OPTIONAL)
-    def versionTag = !softwareTag || !CONFIG.VERSION
+    def versionTag = !moduleTag || !CONFIG.VERSION
         ? null
         : "v${CONFIG.VERSION}"
 
@@ -269,7 +269,7 @@ def formatTags( CONFIG ){
 
     // collect tags & remove null values
     def tagList = [
-        softwareTag,
+        moduleTag,
         versionTag,
         *argumentTags,
         preTag,
