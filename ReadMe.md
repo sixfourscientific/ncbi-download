@@ -87,7 +87,7 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 ```
 
 
-## Further Configuration
+## Workflow Configuration
 
 ### Processes
 
@@ -118,7 +118,7 @@ Individual processes can be configured via the ```params-file``` by supplying in
    }
 ```
 
-#### Command Arguments
+#### Command Line Arguments
 
 Where appropriate, arguments can be provided for a proccess via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. If the same argument is provided to both blocks then that within the ```SWEEP``` block takes priority. 
 
