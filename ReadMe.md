@@ -122,7 +122,7 @@ Individual processes can be configured via the ```params-file``` by supplying in
 
 Where appropriate, arguments can be provided for a proccess via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. If the same argument is provided to both blocks then that within the ```SWEEP``` block takes priority. 
 
-Flags & paraemeters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed respectively by providing the appropriate boolean parameter e.g.
+Flags & parameters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed respectively by providing the appropriate boolean parameter e.g.
 
 *params-file.json*
 
