@@ -165,7 +165,7 @@ parameterZ	false
 
 ```
 "ARGS": {
-   "CORE"  : { "--flagA : "parameterX" },
+   "CORE"  : { "--flagA" : "parameterX" },
    "SWEEP" : "/path/to/SweepInfo.tsv"
    }
 ```
