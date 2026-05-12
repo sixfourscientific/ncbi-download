@@ -44,10 +44,6 @@ include {
     } from "${params.importMap.subworkflows}/core/Subsets_Parse"
 
 include {
-    SUBWORKFLOW as Taxonomy;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Taxonomy"
-
-include {
     SUBWORKFLOW as Query;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Query"
 
@@ -68,10 +64,6 @@ include {
     } from "${params.importMap.subworkflows}/branches/BRANCH_Examine"
 
 include {
-    SUBWORKFLOW as Fetch;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Fetch"
-
-include {
     SUBWORKFLOW as Filter;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Filter"
 
@@ -80,8 +72,16 @@ include {
     } from "${params.importMap.subworkflows}/branches/BRANCH_Collect"
 
 include {
+    SUBWORKFLOW as Fetch;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Fetch"
+
+include {
     SUBWORKFLOW as Divide;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Divide"
+
+include {
+    SUBWORKFLOW as Taxonomy;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Taxonomy"
 
 ////BRANCH_IMPORT////
 
@@ -97,13 +97,9 @@ Parameters = params
 
 EXECUTE  = params.execute.split(',')
 
-// RUN_TAXONOMY = RUN_ALL ?: EXECUTE.contains('taxonomy')
-
 RUN_QUERY = EXECUTE.contains('query')
 
 RUN_FETCH = EXECUTE.contains('fetch')
-
-RUN_DIVIDE = EXECUTE.contains('divide')
 
 ////BRANCH_FILTER////
 
