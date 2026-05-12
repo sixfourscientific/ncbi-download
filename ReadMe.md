@@ -15,13 +15,13 @@ A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
 ```
 
 
-## Arguments
+## Tasks
 
 ```--execute```
 
 ```Query```: Obtain assembly summary information from ncbi
 
-```Fetch```: Search & download individual assemblies from ncbi
+```Fetch```: Query & download individual assemblies from ncbi
 
 ```--inputs```
 
@@ -84,4 +84,31 @@ url
 https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
 https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb-metadata.json
 https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
+```
+
+## Configuration
+
+Each process can be configured via the ```params-file``` by supplying the relevant information in a nested object for the corresponding ```SOFTWARE``` ```COMMAND``` module on a specified workflow ```BRANCH```.
+
+```
+"SOFTWARE": {
+	"COMMAND": {
+		"BRANCH": {
+			"CONFIG": {
+          		"VERSION": [],
+				"LABEL": {
+					"INCLUDE": true,
+					"SOFTWARE": null,
+					"PRE": null,
+					"POST": null,
+					"ALIASES": {}
+					},
+          		"ARGS": {
+            		"CORE": {},
+            		"SWEEP": "/path/to/SweepInfo.tsv"
+          			}
+				}
+			}
+		}
+	}
 ```
