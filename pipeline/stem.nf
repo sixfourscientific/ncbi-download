@@ -29,7 +29,6 @@ include {
     parseSupplementary as parseSupplementary;
     viewMeta as viewMeta;
     prepBridge as prepBridge;
-    splitOutputs as splitOutputs;
     parseUrl as parseUrl;
     makeTag as makeTag;
     } from "$params.importMap.functions/core/Utils"
@@ -80,6 +79,10 @@ include {
     SUBWORKFLOW as Collect;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Collect"
 
+include {
+    SUBWORKFLOW as Divide;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Divide"
+
 ////BRANCH_IMPORT////
 
 
@@ -99,6 +102,8 @@ EXECUTE  = params.execute.split(',')
 RUN_QUERY = EXECUTE.contains('query')
 
 RUN_FETCH = EXECUTE.contains('fetch')
+
+RUN_DIVIDE = EXECUTE.contains('divide')
 
 ////BRANCH_FILTER////
 
@@ -201,46 +206,8 @@ workflow {
         // download datasets
         Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
 
-        // split archives
-        Archives = Fetch.out.Main
-            
-            | toSortedList{ coreMeta1, coreMeta2 -> 
-            
-                coreMeta1.BATCH.INDEX <=> coreMeta2.BATCH.INDEX }
-
-            | flatten()
-
-            | flatMap { coreMeta ->
-
-                def pathList = [ "DATASETS", "DOWNLOAD", "FETCH", "main" ]
-
-                def coreMetaNew = coreMeta + [
-                    BATCH   : null,
-                    GROUPED : null,
-                    ID      : null,
-                    ]
-
-                def splitMetaList = splitOutputs(
-                    coreMeta  : coreMetaNew,
-                    pathList  : pathList,
-                    splitTag  : null,
-                    delimiter : '-',
-                    index     : false,
-                    )
-
-                return splitMetaList }
-
-        | map { coreMeta ->
-
-            def archiveTag = file(coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main)
-                .getBaseName()
-
-            def coreMetaNew = coreMeta + [
-                ID : archiveTag,
-                ]
-
-            return coreMetaNew }
-
+        // divide datasets
+        Divide( Parameters, Fetch.out.Main )
 
 
         // obtain supplementary taxonomy files (if provided)
@@ -343,7 +310,7 @@ workflow {
 
             return indexMetaNew }
 
-        Fetch = Archives.map{ coreMeta -> 
+        Fetch = Divide.out.Main.map{ coreMeta -> 
 
             def indexMeta = [
                 files : coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main,
@@ -375,7 +342,7 @@ workflow {
             
             return indexMetaNew }
 
-        Main = Archives.unique{ coreMeta -> coreMeta.TAG }.map{ coreMeta -> 
+        Main = Divide.out.Main.unique{ coreMeta -> coreMeta.TAG }.map{ coreMeta -> 
 
             // N.B. general bridge using first element
 
@@ -402,6 +369,20 @@ workflow {
 
 
         Collect = Collect.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
+            
+            return indexMetaNew }
+
+        Divide = Divide.out.Main.map{ coreMeta -> 
         
             def indexMeta = [:]
             
@@ -559,6 +540,20 @@ output {
                 return "collect/$indexMeta.run" }
             index {
                 path   'bridge-collect.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
+        Divide { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "divide/$indexMeta.run" }
+            index {
+                path   'bridge-divide.csv'
                 header true
                 sep    '\t'
                 }
