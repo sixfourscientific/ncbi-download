@@ -15,7 +15,7 @@ A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
 ```
 
 
-## Workflow Command Argments
+## Workflow Command Line Argments
 
 ```--execute```
 
@@ -89,8 +89,6 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 
 ## Workflow Configuration
 
-### Processes
-
 Individual processes can be configured via the ```params-file``` by supplying information in the ```CONFIG``` block of the corresponding nested object for a ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
 
 *params-file.json*
@@ -118,7 +116,7 @@ Individual processes can be configured via the ```params-file``` by supplying in
    }
 ```
 
-#### Command Line Arguments
+### Process Command Line Arguments
 
 Where appropriate, arguments can be provided for a proccess via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. If the same argument is provided to both blocks then that within the ```SWEEP``` block takes priority. 
 
