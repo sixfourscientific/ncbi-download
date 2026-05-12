@@ -116,6 +116,25 @@ Individual processes can be configured via the ```params-file``` by supplying in
    }
 ```
 
+A basic configurations can be found within the ```defaults.json``` file. In this workflow the configurable process blocks are as follows:
+
+```
+"DATASETS": {
+   "SUMMARY": {
+      "QUERY": {
+         "CONFIG": {},
+         }
+      },
+   "DOWNLOAD": {
+      "FETCH": {
+         "CONFIG": {},
+         }
+      }
+   }
+```
+
+
+
 ### Process Command Line Arguments
 
 Where appropriate, arguments can be provided for a proccess via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. If the same argument is provided to both blocks then that within the ```SWEEP``` block takes priority. 
@@ -164,23 +183,6 @@ parameterZ	false
 "ARGS": {
    "CORE"  : { "--flagA : "parameterX" },
    "SWEEP" : "/path/to/SweepInfo.tsv"
-   }
-```
-
-Example arguments can be found within the ```defaults.json``` file. In this workflow the configurable module blocks are as follows:
-
-```
-"DATASETS": {
-   "SUMMARY": {
-      "QUERY": {
-         "CONFIG": {},
-         }
-      },
-   "DOWNLOAD": {
-      "FETCH": {
-         "CONFIG": {},
-         }
-      }
    }
 ```
 
