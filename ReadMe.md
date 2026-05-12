@@ -15,7 +15,7 @@ A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
 ```
 
 
-## Tasks
+## Commands
 
 ```--execute```
 
@@ -86,6 +86,7 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb-metadata.json
 https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 ```
 
+
 ## Configuration
 
 Each process can be configured via the ```params-file``` by supplying information in the relevant nested object for a corresponding ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
@@ -97,18 +98,49 @@ Each process can be configured via the ```params-file``` by supplying informatio
 			"CONFIG": {
           		"VERSION": [],
 				"LABEL": {
-					"INCLUDE": true,
-					"SOFTWARE": null,
-					"PRE": null,
-					"POST": null,
-					"ALIASES": {}
+					"INCLUDE"  : true,
+					"SOFTWARE" : null,
+					"PRE"      : null,
+					"POST"     : null,
+					"ALIASES"  : {}
 					},
           		"ARGS": {
-            		"CORE": {},
-            		"SWEEP": "/path/to/SweepInfo.tsv"
+            		"CORE"  : {},
+            		"SWEEP" : "/path/to/SweepInfo.tsv"
           			}
 				}
 			}
 		}
 	}
 ```
+
+
+### Arguments
+
+Arguments can be provided via the ```ARGS``` block where ```CORE``` arguments are applied to all instances & ```SWEEP``` arguments create seperate instances for each list of arguments. Flags & arguments should be strins provided as they would have been to the actual command including any preciding dashes whilst switches (i.e. flags without parameters) can be supplied/removed using using the appropriate boolean parameter  e.g.
+
+```
+"ARGS": {
+	"CORE"  :  { "--flagA : "parameterX"},
+	"SWEEP" :[ 
+		{ "--flagB : "parameterY", "--flagC" : true  }, 
+		{ "--flagB : "parameterZ", "--flagC" : false }
+		]
+	}
+```
+
+The above would run the process twice for each input e.g. 
+
+Instance 1 
+
+```
+SOFTWARE COMMAND --flagA parameterX --flagB paremeterY --flagC INPUT1
+```
+
+Instance 2
+
+```
+SOFTWARE COMMAND --flagA parameterX --flagB paremeterZ INPUT1
+```
+
+If the same argument is provided to both argument blocks then the ```SWEEP``` argument takes priority. 
