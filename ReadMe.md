@@ -8,7 +8,7 @@ A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
       -C /path/to/ncbi-download/pipeline/nextflow.config \
       run /path/to/ncbi-download/pipeline/stem.nf \
       -profile <profile> \
-      -params-file /path/to/ncbi-download/pipeline/params/parameters.json \
+      -params-file /path/to/ncbi-download/pipeline/params/params-file.json \
       --execute [query|fetch] \
       --inputs /path/to/ids.tsv \
       --supplementary "/path/to/urls.tsv=TAXONOMY"
@@ -120,20 +120,18 @@ Individual processes can be configured via the ```params-file``` by supplying in
 
 #### Command Arguments
 
-Where appropriate, arguments can be provided for a proccess via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. 
+Where appropriate, arguments can be provided for a proccess via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. If the same argument is provided to both blocks then that within the ```SWEEP``` block takes priority. 
 
-If the same argument is provided to both blocks then those within the ```SWEEP``` block takes priority. 
-
-Flags & paraemeters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preciding dashes) whilst switches (i.e. flags without parameters) can be eitehr supplied or removed by providing an appropriate boolean parameter e.g.
+Flags & paraemeters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed respectively by providing the appropriate boolean parameter e.g.
 
 *params-file.json*
 
 ```
 "ARGS": {
-   "CORE"  :  { "--flagA : "parameterX" },
+   "CORE"  :  { "--flagA" : "parameterX" },
    "SWEEP" :[ 
-      { "--flagB : "parameterY", "--flagC" : true  }, 
-      { "--flagB : "parameterZ", "--flagC" : false }
+      { "--flagB" : "parameterY", "--flagC" : true  }, 
+      { "--flagB" : "parameterZ", "--flagC" : false }
       ]
    }
 ```
@@ -171,7 +169,7 @@ parameterZ	false
    }
 ```
 
-Example arguments can be found within the defaults.json file. In this workflow the configurable module blocks are as follows:
+Example arguments can be found within the ```defaults.json``` file. In this workflow the configurable module blocks are as follows:
 
 ```
 "DATASETS": {
