@@ -76,6 +76,10 @@ include {
     SUBWORKFLOW as Filter;
     } from "${params.importMap.subworkflows}/branches/BRANCH_Filter"
 
+include {
+    SUBWORKFLOW as Collect;
+    } from "${params.importMap.subworkflows}/branches/BRANCH_Collect"
+
 ////BRANCH_IMPORT////
 
 
@@ -95,7 +99,6 @@ EXECUTE  = params.execute.split(',')
 RUN_QUERY = EXECUTE.contains('query')
 
 RUN_FETCH = EXECUTE.contains('fetch')
-
 
 ////BRANCH_FILTER////
 
@@ -157,14 +160,6 @@ workflow {
 
                 return coreMetaNew }
 
-        // SUBSETS
-
-        def BatchMeta = (params.BATCH ?: [:]) + [
-            NAME      : 'downloads',
-            TARGETS   : [['entry'],['report','accession']],
-            HEADER    : false,
-            VERBOSE   : false,
-            ]
 
 
         // BRANCHES
@@ -197,30 +192,11 @@ workflow {
 
         // FETCH
 
-        // group accessions
-        Grouped = Filter.out.Main
-
-            // sort by (i) queryID & (ii) accession
-            | toSortedList { coreMeta1, coreMeta2 ->  
-
-                // smallest -> largest
-                coreMeta1.entry            <=> coreMeta2.entry
-                ?:
-                // smallest -> largest
-                coreMeta1.report.accession <=> coreMeta2.report.accession }
-
-            // stage for subsetting
-            | map { coreMetaList ->
-
-                def groupMeta = [
-                    BATCH    : BatchMeta,
-                    GROUPED  : coreMetaList,
-                    ]
-
-                return groupMeta }
+        // collect accessions
+        Collect( Parameters, Filter.out.Main )
 
         // subset accesssions into batches
-        ParseSubsets( Parameters, Grouped )
+        ParseSubsets( Parameters, Collect.out.Main )
 
         // download datasets
         Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
@@ -425,6 +401,20 @@ workflow {
             return indexMetaNew }
 
 
+        Collect = Collect.out.Main.map{ coreMeta -> 
+        
+            def indexMeta = [:]
+            
+            def indexMetaNew = prepBridge( 
+                coreMeta  : coreMeta, 
+                indexMeta : indexMeta, 
+                BASIC     : false, 
+                UPDATE    : false, 
+                INTERIM   : false,
+                )      
+            
+            return indexMetaNew }
+
         ////BRANCH_PUBLISH////
 
     }
@@ -555,6 +545,20 @@ output {
             ignoreErrors false
             index {
                 path   'bridge-main.csv'
+                header true
+                sep    '\t'
+                }
+            }
+
+        Collect { 
+            enabled      false
+            mode         'copy'
+            overwrite    'standard'
+            ignoreErrors false
+            path { indexMeta -> 
+                return "collect/$indexMeta.run" }
+            index {
+                path   'bridge-collect.csv'
                 header true
                 sep    '\t'
                 }
