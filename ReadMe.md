@@ -89,7 +89,7 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 
 ## Workflow Configuration
 
-Individual processes can be configured via the ```params-file``` by supplying information in the ```CONFIG``` block of the corresponding nested object for a ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
+Individual processes can be configured via the ```params-file``` by supplying information within the ```CONFIG``` block of the nested object for the corresponding ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
 
 *params-file.json*
 
