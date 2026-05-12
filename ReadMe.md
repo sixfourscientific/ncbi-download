@@ -121,9 +121,9 @@ A basic configuration can be found within the ```defaults.json``` file.
 
 ### Process Command Line Arguments
 
-For certain processes, arguments can be modified via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` arguments create seperate instances for the cartesian products of the individual argument submaps & each input. If the same argument is provided to both blocks then that within the ```SWEEP``` block takes priority. 
+For certain processes, arguments can be modified via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both blocks then that within the ```SWEEP``` block takes priority. 
 
-Flags & parameters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed respectively by providing the appropriate boolean parameter e.g.
+Flags & parameters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the respective boolean parameter e.g.
 
 *params-file.json*
 
