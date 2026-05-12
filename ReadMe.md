@@ -139,13 +139,13 @@ In the above example the process would run twice for a single input with the fol
 #### Instance 1 
 
 ```
-SOFTWARE COMMAND --flagA parameterX --flagB paremeterY --flagC INPUT1
+SOFTWARE COMMAND --flagA parameterX --flagB parameterY --flagC INPUT1
 ```
 
 #### Instance 2
 
 ```
-SOFTWARE COMMAND --flagA parameterX --flagB paremeterZ INPUT1
+SOFTWARE COMMAND --flagA parameterX --flagB parameterZ INPUT1
 ```
 
 It is also possible to provide```SWEEP``` arguments as a tab delimited list by providing a path to this file in place of the submap list e.g.
