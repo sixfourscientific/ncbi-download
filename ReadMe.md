@@ -19,9 +19,9 @@ A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
 
 ```--execute```
 
-```Query```: obtain assembly summary information from ncbi
+```query```: obtain assembly summary information from ncbi
 
-```Fetch```: execute Query & then download individual assemblies from ncbi
+```fetch```: execute Query & then download individual assemblies from ncbi
 
 ```--inputs```
 
