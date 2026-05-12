@@ -88,7 +88,7 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 
 ## Configuration
 
-Each process can be configured via the ```params-file``` by supplying the relevant information in a nested object for the corresponding ```SOFTWARE``` ```COMMAND``` module on a specified workflow ```BRANCH```.
+Each process can be configured via the ```params-file``` by supplying information in the relevant nested object for a corresponding ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
 
 ```
 "SOFTWARE": {
