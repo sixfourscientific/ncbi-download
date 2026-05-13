@@ -219,15 +219,15 @@ In the examples used earlier the process would be tagged with the following:
 #### Without Aliases
 
 ```
-SWEEP1 TAG: "flagAparameterX.flagBparameterY.flagCTrue
-SWEEP2 TAG: "flagAparameterX.flagBparameterZ.flagCFalse
+INSTANCE1 TAG: "flagAparameterX.flagBparameterY.flagCTrue
+INSTANCE2 TAG: "flagAparameterX.flagBparameterZ.flagCFalse
 ```
 
 #### With Aliases
 
 ```
-SWEEP1 TAG: "fApX.fBpY.fCT"
-SWEEP2 TAG: "fApX.fBpZ.fCF"
+INSTANCE1 TAG: "fApX.fBpY.fCT"
+INSTANCE2 TAG: "fApX.fBpZ.fCF"
 ```
 
 
