@@ -17,13 +17,13 @@ A nextflow workflow to assist with the bulk downloading of assemblies & taxonomy
 ```
 
 
-## Workflow Command Line Argments
+## Workflow Command Line Arguments
 
 `--execute`
 
 `query`: obtain assembly summary information from ncbi
 
-`fetch`: execute Query & then download individual assemblies from ncbi
+`fetch`: execute 'query' & then download individual assemblies from ncbi
 
 `--inputs`
 
@@ -77,7 +77,7 @@ GCF_000009045.1
 
 `--supplementary`
 
-An optional list of urls with the header 'url' for the taxonomy files to be downloaded.
+An optional list of urls with the header `url` for the taxonomy files to be downloaded.
 
 e.g.
 
@@ -117,9 +117,9 @@ See the `defaults.json` file for a basic configuration.
 
 ### Process Command Line Arguments
 
-Processes that accept command line arguments can have these configured via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both options then that within the `SWEEP` option takes priority. 
+Processes that accept command line arguments can have these configured via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create separate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both options then that within the `SWEEP` option takes priority. 
 
-Flags & parameters should be provided as strings just as they would have been were the particular software used for a process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the appropriate boolean parameter.
+Flags & parameters should be provided as strings just as they would have been were the particular software used for a process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the appropriate Boolean parameter.
 
 e.g.
 
@@ -191,7 +191,7 @@ In this workflow arguments are configurable for the following processes blocks:
 
 ### Process Software Version
 
-If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. Seperate instances are created for the cartesian products of individual software versions & each parameter sweep (see above). For example, if two argument submaps are provided along with two release tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with every parameter sweep processed using each of the software versions. If not provided then the process would typically default to a specified software version within the configuration.
+If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. Separate instances are created for the cartesian products of individual software versions & each parameter sweep (see above). For example, if two argument submaps are provided along with two release tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with every parameter sweep processed using each of the software versions. If not provided then the process would typically default to a specified software version within the configuration.
 
 
 
@@ -211,7 +211,7 @@ For each process, metadata associated with the state or processing can be record
    }
 ```
 
-The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the apporprioate boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediatley following the current process) respectivley. 
+The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the appropriate  Boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediately following the current process) respectively. 
 
 The `ALIASES` option takes a map where the keys are the command line flags/parameters provided via the `ARGS` block & the values are corresponding aliases to be recorded within the metadata tag. This can be useful when particular flags/parameters are long & a shorter alias is preferable.
 
@@ -250,7 +250,7 @@ INSTANCE1 TAG: "fApX.fBpY.fCT"
 INSTANCE2 TAG: "fApX.fBpZ.fCF"
 ```
 
-If no command line arguments are provided a tag of `DEFAULT` is included which itelf can be substituted with an alias. Several default aliases are hard coded (see below) but those within the `ALIASES` option take priority.
+If no command line arguments are provided a tag of `DEFAULT` is included which itself can be substituted with an alias. Several default aliases are hard coded (see below) but those within the `ALIASES` option take priority.
 
 #### Default Aliases
 
