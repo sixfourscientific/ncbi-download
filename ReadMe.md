@@ -109,14 +109,15 @@ Individual processes can be configured via the `params-file` by supplying inform
    }
 ```
 
-A basic configuration can be found within the `defaults.json` file.
+See the `defaults.json` file for a basic configuration.
+
 
 
 ### Process Command Line Arguments
 
-Certain processes take comman line arguments which can be modified via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both options then that within the `SWEEP` option takes priority. 
+Processes that accept command line arguments can have these configured via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both options then that within the `SWEEP` option takes priority. 
 
-Flags & parameters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the respective boolean parameter.
+Flags & parameters should be provided as strings just as they would have been were the particular software used for a process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the appropriate boolean parameter.
 
 e.g.
 
@@ -183,6 +184,14 @@ In this workflow arguments are configurable for the following processes blocks:
       }
    }
 ```
+
+
+
+### Process Software Version
+
+If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. A seperate instances is created for the cartesian products of individual software versions & each combination of parameter sweep (see above). For example, if two argument submaps are provided along with two releast tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with each parameter sweep processed using evrey software version. If not provided then the process defaults to the first software version configured.
+
+
 
 ### Process Metadata Label
 
