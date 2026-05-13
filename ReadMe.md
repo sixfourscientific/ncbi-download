@@ -209,7 +209,7 @@ The `ALIASES` option takes a map where the keys are the command line flags &/or 
       "parameterZ" : "pZ",
       "--flagC"    : "fC",
       (true)       : "T",
-      (true)       : "F"
+      (false)      : "F"
       } 
    }
 ```
