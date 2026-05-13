@@ -189,7 +189,7 @@ In this workflow arguments are configurable for the following processes blocks:
 
 ### Process Software Version
 
-If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. A seperate instances is created for the cartesian products of individual software versions & each combination of parameter sweep (see above). For example, if two argument submaps are provided along with two releast tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with each parameter sweep processed using evrey software version. If not provided then the process defaults to the first software version configured.
+If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. Seperate instances are created for the cartesian products of individual software versions & each parameter sweep (see above). For example, if two argument submaps are provided along with two releast tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with every parameter sweep processed using each software version. If not provided then the process typically defaults to the specified software version configured.
 
 
 
