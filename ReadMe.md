@@ -232,7 +232,7 @@ e.g.
    }
 ```
 
-In the examples used earlier the process would be labelled with the following tags:
+In the example used earlier the process would label each input with the following tags:
 
 #### Without Aliases
 
