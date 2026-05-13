@@ -114,7 +114,7 @@ A basic configuration can be found within the `defaults.json` file.
 
 ### Process Command Line Arguments
 
-Certain processes take comman line arguments which can be modified via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both blocks then that within the `SWEEP` block takes priority. 
+Certain processes take comman line arguments which can be modified via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both options then that within the `SWEEP` option takes priority. 
 
 Flags & parameters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the respective boolean parameter.
 
@@ -193,11 +193,11 @@ For each process, metadata associated with the state or processing can be record
 ```
 "LABEL": {
    "INCLUDE"  : <bool>,
-    "MODULE"  : <string>,
-    "PRE"     : <string>,
-    "POST"    : <string>,
-    "ALIASES" : {}
-    }
+   "MODULE"  : <string>,
+   "PRE"     : <string>,
+   "POST"    : <string>,
+   "ALIASES" : {}
+   }
 ```
 
 The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the apporprioate boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediatley following the current process) respectivley. 
@@ -239,4 +239,13 @@ INSTANCE1 TAG: "fApX.fBpY.fCT"
 INSTANCE2 TAG: "fApX.fBpZ.fCF"
 ```
 
+If no command line arguments are provided a tag of `DEFAULT` is included which itelf can be substituted with an alias. Several default aliases are hard coded (see below) but those within the `ALIASES` option take priority.
 
+#### Default Aliases
+
+```
+"DEFAULT" : "def"
+(null)    : "NA"
+(true)    : "T"
+(false)   : "F"
+```
