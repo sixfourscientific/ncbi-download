@@ -81,7 +81,7 @@ An optional list of urls with the header 'url' for the taxonomy files to be down
 
 e.g.
 
-*taxonomy_file_urls.tsv*
+*file_urls.tsv*
 
 ```
 url
@@ -191,7 +191,7 @@ In this workflow arguments are configurable for the following processes blocks:
 
 ### Process Software Version
 
-If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. Seperate instances are created for the cartesian products of individual software versions & each parameter sweep (see above). For example, if two argument submaps are provided along with two releast tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with every parameter sweep processed using each software version. If not provided then the process typically defaults to the specified software version configured.
+If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. Seperate instances are created for the cartesian products of individual software versions & each parameter sweep (see above). For example, if two argument submaps are provided along with two release tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with every parameter sweep processed using each of the software versions. If not provided then the process would typically default to a specified software version within the configuration.
 
 
 
@@ -203,7 +203,7 @@ For each process, metadata associated with the state or processing can be record
 
 ```
 "LABEL": {
-   "INCLUDE"  : <bool>,
+   "INCLUDE" : <bool>,
    "MODULE"  : <string>,
    "PRE"     : <string>,
    "POST"    : <string>,
