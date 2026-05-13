@@ -156,7 +156,7 @@ e.g.
 *SweepInfo.tsv*
 
 ```
----flagB	--flagC
+--flagB	--flagC
 parameterY	true
 parameterZ	false
 ```
