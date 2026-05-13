@@ -1,6 +1,8 @@
 # README
 
-A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
+## Description
+
+A nextflow workflow to assist with the bulk downloading of assemblies & taxonomy files from NCBI
 
 ## Quickstart
 ```
@@ -17,13 +19,13 @@ A workflow to handle bulk downloads of assemblies & taxonomy files from NCBI
 
 ## Workflow Command Line Argments
 
-```--execute```
+`--execute`
 
-```query```: obtain assembly summary information from ncbi
+`query`: obtain assembly summary information from ncbi
 
-```fetch```: execute Query & then download individual assemblies from ncbi
+`fetch`: execute Query & then download individual assemblies from ncbi
 
-```--inputs```
+`--inputs`
 
 Inputs can be either a list of taxon ids, taxon names or assembly accession codes with the header 'taxon' or 'accession' as appropriate.
 
@@ -73,7 +75,7 @@ GCF_000009045.1
 
 ```
 
-```--supplementary```
+`--supplementary`
 
 An optional list of urls with the header 'url' for the taxonomy files to be downloaded.
 
@@ -89,7 +91,7 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 
 ## Workflow Configuration
 
-Individual processes can be configured via the ```params-file``` by supplying information within the ```CONFIG``` block of the nested object for the corresponding ```SOFTWARE``` ```COMMAND``` module on a particular workflow ```BRANCH```.
+Individual processes can be configured via the `params-file` by supplying information within the `CONFIG` block of the nested object for the corresponding `SOFTWARE` `COMMAND` module on a particular workflow `BRANCH`.
 
 *params-file.json*
 
@@ -98,30 +100,21 @@ Individual processes can be configured via the ```params-file``` by supplying in
    "COMMAND": {
       "BRANCH": {
          "CONFIG": {
-            "VERSION": [],
-            "LABEL": {
-               "INCLUDE" : true,
-               "MODULE " : null,
-               "PRE"     : null,
-               "POST"    : null,
-               "ALIASES" : {}
-               },
-            "ARGS": {
-               "CORE"  : {},
-               "SWEEP" : [{},{}]
-               }
+            "VERSION" : [],
+            "LABEL"   : {},
+            "ARGS"    : {}
             }
          }
       }
    }
 ```
 
-A basic configuration can be found within the ```defaults.json``` file.
+A basic configuration can be found within the `defaults.json` file.
 
 
 ### Process Command Line Arguments
 
-For certain processes, arguments can be modified via the ```ARGS``` block where ```CORE``` arguments are applied to all instances whilst the list of ```SWEEP``` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both blocks then that within the ```SWEEP``` block takes priority. 
+Certain processes take comman line arguments which can be modified via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create seperate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both blocks then that within the `SWEEP` block takes priority. 
 
 Flags & parameters should be provided as strings just as they would have been were the process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the respective boolean parameter e.g.
 
@@ -151,7 +144,7 @@ SOFTWARE COMMAND --flagA parameterX --flagB parameterY --flagC INPUT1
 SOFTWARE COMMAND --flagA parameterX --flagB parameterZ INPUT1
 ```
 
-It is also possible to provide```SWEEP``` arguments as a tab delimited list by providing a path to this file in place of the submap list e.g.
+It is also possible to provide `SWEEP` arguments as a tab delimited list by providing a path to this file in place of the submap list e.g.
 
 *SweepInfo.tsv*
 
@@ -170,7 +163,7 @@ parameterZ	false
    }
 ```
 
- In this workflow arguments are configurable for the following processes blocks:
+In this workflow arguments are configurable for the following processes blocks:
 
 ```
 "DATASETS": {
@@ -185,6 +178,56 @@ parameterZ	false
          }
       }
    }
+```
+
+### Process Metadata Label
+
+For each process, metadata associated with the state or processing can be recorded for an input via the `LABEL` block. This s particularly useful when performing parameter sweeps since it records information about the command line arguments provided. 
+
+```
+"LABEL": {
+   "INCLUDE"  : <bool>,
+    "MODULE"  : <string>,
+    "PRE"     : <string>,
+    "POST"    : <string>,
+    "ALIASES" : {}
+    }
+```
+The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the apporprioate boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediatley following the current process) respectivley. 
+
+The `ALIASES` option takes a map where the keys are the command line flags &/or parameters provided via the `ARGS` block & the values are corresponding aliases to be recorded within the metadata tag. This can be useful when particular flags/parameters are quite long & shorter alias would be preferable e.g.
+
+*params-file.json*
+
+```
+"LABEL": {
+   "ALIASES" :[
+      "--flagA"    : "fA",
+      "parameterX" : "pX",
+      "--flagB"    : "fB",
+      "parameterY" : "pY",
+      "parameterZ" : "pZ",
+      "--flagC"    : "fC",
+      (true)       : "T",
+      (true)       : "F"
+      } 
+   }
+```
+
+In the examples used earlier the process would be tagged with the following:
+
+#### Without Aliases
+
+```
+SWEEP1 TAG: "flagAparameterX.flagBparameterY.flagCTrue
+SWEEP2 TAG: "flagAparameterX.flagBparameterZ.flagCFalse
+```
+
+#### With Aliases
+
+```
+SWEEP1 TAG: "fApX.fBpY.fCT"
+SWEEP2 TAG: "fApX.fBpZ.fCF"
 ```
 
 
