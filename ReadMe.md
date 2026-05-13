@@ -81,7 +81,7 @@ An optional list of urls with the header 'url' for the taxonomy files to be down
 
 e.g.
 
-*taxonomy_files.tsv*
+*taxonomy_file_urls.tsv*
 
 ```
 url
