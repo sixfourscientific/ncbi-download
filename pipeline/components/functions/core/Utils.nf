@@ -103,7 +103,7 @@ def prepBridge( args ){
     def updateIndex = args.UPDATE
     def interimIndex = args.INTERIM
 
-    def infoMap = [ 
+    def runMeta = [ 
         ID  : coreMeta.ID,
         TAG : coreMeta.TAG,
         ] 
@@ -111,11 +111,11 @@ def prepBridge( args ){
     // new header
     if ( !updateIndex && !interimIndex ) {
     
-        def runMap = basicIndex 
+        def infoMeta = basicIndex 
             ? [:]
-            : infoMap
+            : runMeta
 
-        indexMetaNew.putAll( runMap + indexMeta ) }
+        indexMetaNew.putAll( infoMeta + indexMeta ) }
 
     // update original header
     else {
@@ -124,15 +124,15 @@ def prepBridge( args ){
         def fieldMeta = coreMeta.INFO.FIELDS
 
             .collectEntries { key ->
-                def value = key.equals('id')
-                    ? "$coreMeta.ID-$coreMeta.TAG" // updated; include tag in id field
-                    : coreMeta[key]   // original
+                def value = coreMeta[key] // original (id update no longer required)
                 return  [ (key) : value ] }
+
+        def updateMeta = fieldMeta + runMeta
 
         // original fields including updates
         if ( !interimIndex ) {
 
-            indexMetaNew.putAll(fieldMeta) }
+            indexMetaNew.putAll(updateMeta) }
 
         // original fields including intermediary info
         else {
@@ -142,7 +142,7 @@ def prepBridge( args ){
                 .collectEntries{ key, value ->
                     [ "${key}.${params.intTag}" : value ]}
 
-            indexMetaNew.putAll( fieldMeta + interimMeta ) }
+            indexMetaNew.putAll( updateMeta + interimMeta ) }
 
         }
 
