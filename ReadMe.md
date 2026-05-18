@@ -90,6 +90,9 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb-metadata.json
 https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 ```
 
+**N.B. Taxonomies are constantly being updated & it may be important to obtain information that corresponds with the references at the time they were obtained.**
+
+
 
 ## Workflow Configuration
 
@@ -117,7 +120,7 @@ See the `defaults.json` file for a basic configuration.
 
 ### Process Command Line Arguments
 
-Processes that accept command line arguments can have these configured via the `ARGS` block where `CORE` arguments are applied to all instances whilst the list of `SWEEP` argument submaps create separate instances for the cartesian products of individual argument submaps & each input. If the same argument is provided in both options then that within the `SWEEP` option takes priority. 
+Processes that accept command line arguments can have these configured via the `ARGS` block where `CORE` arguments are applied to all tasks whilst the list of `SWEEP` argument submaps create separate tasks for the cartesian products of individual argument submaps & each input. If the same argument is provided in both options then that within the `SWEEP` option takes priority. 
 
 Flags & parameters should be provided as strings just as they would have been were the particular software used for a process to be run via the command line (i.e. including any preceding dashes) whilst switches (i.e. flags without parameters) can be either supplied or removed by providing the appropriate Boolean parameter.
 
@@ -137,13 +140,13 @@ e.g.
 
 In the above example the process would run twice for a single input with the following command line arguments: 
 
-#### Instance 1 
+#### Task 1 
 
 ```
 SOFTWARE COMMAND --flagA parameterX --flagB parameterY --flagC INPUT1
 ```
 
-#### Instance 2
+#### Task 2
 
 ```
 SOFTWARE COMMAND --flagA parameterX --flagB parameterZ INPUT1
@@ -191,13 +194,13 @@ In this workflow arguments are configurable for the following processes blocks:
 
 ### Process Software Version
 
-If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. Separate instances are created for the cartesian products of individual software versions & each parameter sweep (see above). For example, if two argument submaps are provided along with two release tags to the `SWEEP` & `VERSION` options respectively, then a total of four instances are created per input with every parameter sweep processed using each of the software versions. If not provided then the process would typically default to a specified software version within the configuration.
+If configured, processes can be executed for multiple software versions by providing a list of release tags to the `VERSION` option. Separate tasks are created for the cartesian products of individual software versions & each parameter sweep (see above). For example, if two argument submaps are provided along with two release tags to the `SWEEP` & `VERSION` options respectively, then a total of four tasks are created per input with every parameter sweep processed using each of the software versions. If not provided then the process would typically default to a specified software version within the configuration.
 
 
 
 ### Process Metadata Label
 
-For each process, metadata associated with the state or processing can be recorded for an input via the `LABEL` block. This s particularly useful when performing parameter sweeps since it records information about the command line arguments provided. 
+For each process, metadata associated with the state or processing can be recorded for an input via the `LABEL` block. This is particularly useful when performing parameter sweeps since it records information about the command line arguments provided. 
 
 *params-file.json*
 
@@ -211,9 +214,18 @@ For each process, metadata associated with the state or processing can be record
    }
 ```
 
-The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the appropriate  Boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediately following the current process) respectively. 
+The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the appropriate  Boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediately following the current process) respectively. If a software `VERSION` was specified then this will also be included. All individual tags are optional & are included in the following order when present:
 
-The `ALIASES` option takes a map where the keys are the command line flags/parameters provided via the `ARGS` block & the values are corresponding aliases to be recorded within the metadata tag. This can be useful when particular flags/parameters are long & a shorter alias is preferable.
+#### Pre-process
+
+`<CURRENT_TAG>.<MODULE_TAG>.<VERSION_TAG>.<ARGUMENTS_TAG>.<PRE_TAG>`
+
+#### Post-process
+
+`<CURRENT_TAG>.<POST_TAG>`
+
+
+The `ALIASES` option takes a map where the keys are the command line flags/parameters provided via the `ARGS` block & the values are corresponding aliases to be recorded within the metadata tag. This can be useful when particular flags/parameters are long & a shorter alias is sensible.
 
 e.g.
 
@@ -221,7 +233,7 @@ e.g.
 
 ```
 "LABEL": {
-   "ALIASES" :[
+   "ALIASES" : {
       "--flagA"    : "fA",
       "--flagB"    : "fB",
       "--flagC"    : "fC",
@@ -239,15 +251,15 @@ In the example used earlier the process would label each input with the followin
 #### Without Aliases
 
 ```
-INSTANCE1 TAG: "flagAparameterX.flagBparameterY.flagCTrue"
-INSTANCE2 TAG: "flagAparameterX.flagBparameterZ.flagCFalse"
+TASK1 TAG: "flagAparameterX.flagBparameterY.flagCTrue"
+TASK2 TAG: "flagAparameterX.flagBparameterZ.flagCFalse"
 ```
 
 #### With Aliases
 
 ```
-INSTANCE1 TAG: "fApX.fBpY.fCT"
-INSTANCE2 TAG: "fApX.fBpZ.fCF"
+TASK1 TAG: "fApX.fBpY.fCT"
+TASK2 TAG: "fApX.fBpZ.fCF"
 ```
 
 If no command line arguments are provided a tag of `DEFAULT` is included which itself can be substituted with an alias. Several default aliases are hard coded (see below) but those within the `ALIASES` option take priority.
