@@ -204,12 +204,12 @@ def formatTags( CONFIG ){
     // module tag (OPTIONAL)
     def moduleTag = !CONFIG.LABEL.MODULE 
         ? null
-        : checkAlias(CONFIG.LABEL.MODULE, CONFIG.LABEL.ALIASES)
+        : CONFIG.LABEL.MODULE
 
     // version tag (OPTIONAL)
     def versionTag = !moduleTag || !CONFIG.VERSION
         ? null
-        : "v${CONFIG.VERSION}"
+        : "v$CONFIG.VERSION"
 
     // extra tag (OPTIONAL)
     def preTag = CONFIG.LABEL.PRE ?: null
