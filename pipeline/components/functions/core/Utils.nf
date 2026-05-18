@@ -219,7 +219,7 @@ def formatTags( CONFIG ){
 
     // remove arguments with null flag alias
     CONFIG.LABEL.ALIASES
-        .findAll{ key, value -> !value }
+        .findAll{ key, value -> value == null }
         .keySet()
         .each { key -> settings.remove(key) }
 

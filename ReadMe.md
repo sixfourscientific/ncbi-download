@@ -225,7 +225,7 @@ The `INCLUDE` option toggles whether any metadata tags are recorded for a proces
 `<CURRENT_TAG>.<POST_TAG>`
 
 
-The `ALIASES` option takes a map where the keys are the command line flags/parameters provided via the `ARGS` block & the values are corresponding aliases to be recorded within the metadata tag. This can be useful when particular flags/parameters are long & a shorter alias is sensible.
+The `ALIASES` option takes a map where the keys are the command line flags/parameters provided via the `ARGS` block & the values are corresponding aliases to be recorded within the metadata tag. This can be useful when particular flags/parameters are long & a shorter alias is sensible. An alias of `null` for a flag will remove information for both the flag & the corresponding parameter whilst an empty string `""` will remove information for just an individual flag or parameter.
 
 e.g.
 
@@ -234,10 +234,9 @@ e.g.
 ```
 "LABEL": {
    "ALIASES" : {
-      "--flagA"    : "fA",
-      "--flagB"    : "fB",
+      "--flagA"    : null,
+      "--flagB"    : "",
       "--flagC"    : "fC",
-      "parameterX" : "pX",
       "parameterY" : "pY",
       "parameterZ" : "pZ",
       (true)       : "T",
@@ -258,8 +257,8 @@ TASK2 TAG: "flagAparameterX.flagBparameterZ.flagCFalse"
 #### With Aliases
 
 ```
-TASK1 TAG: "fApX.fBpY.fCT"
-TASK2 TAG: "fApX.fBpZ.fCF"
+TASK1 TAG: "pY.fCT"
+TASK2 TAG: "pZ.fCF"
 ```
 
 If no command line arguments are provided a tag of `DEFAULT` is included which itself can be substituted with an alias. Several default aliases are hard coded (see below) but those within the `ALIASES` option take priority.
