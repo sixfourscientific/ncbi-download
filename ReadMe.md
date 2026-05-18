@@ -90,7 +90,7 @@ https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb-metadata.json
 https://ftp.ncbi.nlm.nih.gov/blast/db/taxdb.tar.gz
 ```
 
-**N.B. Taxonomies are constantly being updated & it may be important to obtain information that corresponds with the references at the time they were obtained.**
+**N.B. Taxonomies are constantly being updated & it may be important to obtain information that corresponds with the references when they were obtained.**
 
 
 
