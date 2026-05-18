@@ -214,7 +214,7 @@ For each process, metadata associated with the state or processing can be record
    }
 ```
 
-The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the appropriate  Boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediately following the current process) respectively. If a software `VERSION` was specified then this will also be included. All individual tags are optional & are included in the following order when present:
+The `INCLUDE` option toggles whether any metadata tags are recorded for a process by providing the appropriate  Boolean parameter. Otherwise, a `MODULE` tag can describe what processing is taking place whilst the `PRE` & `POST` tags can describe the pre-process or post-process state of an input (i.e. the state immediately prior to or immediately following the current process) respectively. If command line arguments &/or a software `VERSION` were provideds then this will also be included. All individual tags are optional & are included in the following order when present:
 
 #### Pre-process
 
