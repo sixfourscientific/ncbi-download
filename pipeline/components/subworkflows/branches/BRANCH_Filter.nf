@@ -5,11 +5,11 @@
 
 include { 
     viewMeta as viewMeta;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../functions/core/Utils"
 
 include { 
     Config_Parse as ParseConfig;
-    } from "${params.importMap.subworkflows}/core/Config_Parse"
+    } from "../core/Config_Parse"
 
 ////LEAF_IMPORT////
 
@@ -35,7 +35,7 @@ workflow SUBWORKFLOW {
 
             // remove duplicate accessions (if duplicated via taxon or accession)
             | unique { coreMeta -> coreMeta.report.accession }            
-
+            
         ////LEAF_PARSE_RUN////
 
         | set { Processed }
@@ -43,6 +43,6 @@ workflow SUBWORKFLOW {
 
     emit :
 
-        Main = Processed
+        Processed
 
     }

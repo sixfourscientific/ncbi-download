@@ -6,11 +6,11 @@
 include { 
     viewMeta as viewMeta;
     splitOutputs as splitOutputs;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../functions/core/Utils"
 
 include { 
     Config_Parse as ParseConfig;
-    } from "${params.importMap.subworkflows}/core/Config_Parse"
+    } from "../core/Config_Parse"
 
 ////LEAF_IMPORT////
 
@@ -28,7 +28,6 @@ workflow SUBWORKFLOW {
     main:
 
         ////LEAF_START////
-
 
         Inputs
             
@@ -76,6 +75,6 @@ workflow SUBWORKFLOW {
 
     emit :
 
-        Main = Processed
+        Processed
 
     }
