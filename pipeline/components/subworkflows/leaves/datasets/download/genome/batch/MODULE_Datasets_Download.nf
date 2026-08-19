@@ -2,7 +2,7 @@
 include { 
     formatArguments as formatArguments;
     makeTag as makeTag;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../../../functions/core/Utils"
 
 process MODULE {
 
@@ -15,16 +15,16 @@ process MODULE {
         : 'DEFAULT'
 
     // EXTRA
-    
+
     ext tag : {
-    
+
         def tag = makeTag(
             tags      : [ CoreMeta.ID, CoreMeta.TAG ],
-            delimiter :'-',
+            delimiter : '-',
             )
-    
+ 
         return tag },
-
+    
     version : {
 
             def version = CoreMeta.STAGING.VERSION
