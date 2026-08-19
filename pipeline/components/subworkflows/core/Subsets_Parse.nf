@@ -3,14 +3,9 @@
 
 include { 
     parseSubsets as parseSubsets;
-    } from "$params.importMap.functions/core/Files"
-
-
-include { 
-    getSubMap as getSubMap;
-    flattenMap as flattenMap;
-    makeTag as makeTag;
-    } from "$params.importMap.functions/core/Utils"
+    writeSubset  as writeSubset;
+    groupSubset  as groupSubset;
+    } from "../../functions/core/Files"
 
 
 workflow Subsets_Parse {
@@ -33,7 +28,7 @@ workflow Subsets_Parse {
                     )
 
                 return subsetList }
-        
+
         | set { Subsets }
 
         // record subset in batch file
@@ -43,42 +38,12 @@ workflow Subsets_Parse {
                 newLine : true,                
                 ){ subsetMeta ->
 
-                    def fileName = subsetMeta.BATCH.FILE
+                    def ( fileName, fileText ) = writeSubset(
+                        batch   : subsetMeta.BATCH,
+                        grouped : subsetMeta.GROUPED,
+                        )   
 
-                    def nestList = subsetMeta.BATCH.TARGETS
-
-                    def text = subsetMeta.GROUPED
-
-                        .withIndex()
-
-                        .collect{ elementMeta, idx ->
-
-                            // extract submap as required
-                            def relevantMeta = nestList
-                                ? getSubMap(elementMeta, nestList)
-                                : elementMeta
-
-                            // flatten nested map structure
-                            def flatMeta = flattenMap(relevantMeta)
-
-                            def keys = flatMeta
-                                .keySet()
-                                .join('\t')
-
-                            def values = flatMeta
-                                .values()
-                                .join('\t')
-
-                            // return header (keys) as required
-                            def lines = ( subsetMeta.BATCH.HEADER && idx.equals(0) )
-                                ? "$keys\n$values"
-                                : values
-
-                            return lines }
-
-                            .join('\n')
-
-                        return [ fileName, text, ] }
+                    return [ fileName, fileText, ] }
 
             | set { Files }
 
@@ -101,31 +66,11 @@ workflow Subsets_Parse {
 
         | groupTuple( by:0 )
 
-                | map { groupID, infoGroup ->
-                    
-                    def ( metaList, nonMetaList ) = infoGroup.split{ obj -> obj instanceof Map }
-                    
-                    assert metaList.size()    == 1, 'Multiple meta objects regrouped'
+                | map { _groupID, infoGroup ->
 
-                    assert nonMetaList.size() == 1, 'Multiple batches regrouped'
-
-                    def (subsetMeta) = metaList
-
-                    def (filePath) = nonMetaList
-
-                    def idNew = makeTag(
-                        tags      : [ subsetMeta.BATCH.NAME, 'BATCH', subsetMeta.BATCH.INDEX ], 
-                        delimiter : '-',
+                    def subsetMetaNew = groupSubset(
+                        grouped : infoGroup,
                         )
-
-                    def batchMeta = subsetMeta.BATCH + [
-                        FILE: filePath,
-                        ]
-
-                    def subsetMetaNew = subsetMeta + [
-                        ID    : idNew,
-                        BATCH : batchMeta,
-                        ]
 
                     return subsetMetaNew }
         
@@ -135,6 +80,6 @@ workflow Subsets_Parse {
 
     emit:
 
-        Main = Processed
+       Processed
 
     }

@@ -3,7 +3,7 @@
 
 include { 
     parseInfo as parseInfo;
-    } from "$params.importMap.functions/core/Files"
+    } from "../../functions/core/Files"
 
 workflow Info_Parse {
 
@@ -17,8 +17,10 @@ workflow Info_Parse {
             input: Input,
             )
 
+        Parsed = channel.from(Info)
+
     emit:
 
-        Main = Channel.from(Info)
+        Parsed
 
     }
