@@ -6,11 +6,11 @@
 include { 
     preStage  as preStage;
     postStage as postStage;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../../../functions/core/Utils"
 
 include { 
     MODULE as Run;
-    } from "${params.importMap.subworkflows}/leaves/custom/tabulate/MODULE_Custom_Tabulate.nf"
+    } from "./MODULE_Custom_Tabulate.nf"
 
 workflow STAGING {
 
@@ -35,7 +35,7 @@ workflow STAGING {
                         coreMeta     : coreMeta, 
                         configMeta   : configMeta,
                         tagDelimiter : null,
-                        tagDefault   : null,
+                        tagDefault   : null,                        
                         )
 
                     return coreMetaNew }
@@ -47,7 +47,7 @@ workflow STAGING {
 
                     def skipOptional = !coreMeta.optional || !coreMeta.STAGING.ARGS.containsKey('--optional')
 
-                    def optionalFile  = file( !skipOptional ? coreMeta.optional : 'optional.dummy' )
+                    def optionalFile  = file( !skipOptional ? coreMeta.optional : coreMeta.dummy )
 
                     return [
                         coreMeta,
@@ -83,6 +83,6 @@ workflow STAGING {
 
     emit:
 
-        Main = Processed
+        Processed
 
     }
