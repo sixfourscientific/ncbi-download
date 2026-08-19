@@ -13,7 +13,7 @@ include {
 
 include {
     STAGING as DownloadDatasets;
-    } from "../leaves/datasets/download/genome/STAGING_Datasets_Download.nf"
+    } from "../leaves/datasets/download/genome/batch/STAGING_Datasets_Download.nf"
 
 ////LEAF_IMPORT////
 
