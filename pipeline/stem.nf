@@ -80,8 +80,8 @@ workflow {
 
         // SETUP
 
-        taxonomySubdir = 'taxonomy'
-        datasetsSubdir = 'datasets'
+        params.taxonomySubdir = 'taxonomy'
+        params.datasetsSubdir = 'datasets'
 
         parseSupplementary( params.supplementary, params )
 
@@ -281,13 +281,13 @@ workflow {
             // N.B. general bridge using first element
 
             def taxonomySubdir = params.TAXONOMY 
-                ? "${workflow.outputDir}/$taxonomySubdir"
+                ? "${workflow.outputDir}/$params.taxonomySubdir"
                 : 'NA'
             
             def indexMeta = [
                 ID       : 'datasets',
                 TAG      : coreMeta.TAG,
-                datasets : "${workflow.outputDir}/$datasetsSubdir/$coreMeta.TAG",
+                datasets : "${workflow.outputDir}/$params.datasetsSubdir/$coreMeta.TAG",
                 taxonomy : taxonomySubdir,
                 ]
             
@@ -342,7 +342,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                indexMeta.files >> "$datasetsSubdir/$indexMeta.TAG/" 
+                indexMeta.files >> "$params.datasetsSubdir/$indexMeta.TAG/" 
                 }
             index {
                 path   'bridge-fetch-datasets.csv'
@@ -358,7 +358,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                indexMeta.files >> "$taxonomySubdir/" 
+                indexMeta.files >> "$params.taxonomySubdir/" 
                 }
             index {
                 path   'bridge-taxonomy.csv'
