@@ -2,7 +2,7 @@
 include { 
     formatArguments as formatArguments;
     makeTag as makeTag;
-    } from "../../../../functions/core/Utils"
+    } from "../../../../../../functions/core/Utils"
 
 process MODULE {
 
