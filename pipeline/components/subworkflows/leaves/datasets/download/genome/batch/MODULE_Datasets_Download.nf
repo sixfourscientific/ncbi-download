@@ -50,7 +50,7 @@ process MODULE {
 
         tuple   val  (CoreMeta),
                 path (INPUT),
-                path (OPTIONAL),
+             // path (OPTIONAL),
                 val  (Arguments)
 
     output:

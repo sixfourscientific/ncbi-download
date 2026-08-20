@@ -45,14 +45,14 @@ workflow STAGING {
 
                 | map { coreMeta ->
 
-                    def skipOptional = !coreMeta.optional || !coreMeta.STAGING.ARGS.containsKey('--optional')
+                 // def skipOptional = !coreMeta.optional || !coreMeta.STAGING.ARGS.containsKey('--optional')
 
-                    def optionalFile  = file( !skipOptional ? coreMeta.optional : coreMeta.dummy )
+                 // def optionalFile  = file( !skipOptional ? coreMeta.optional : coreMeta.dummy )
 
                     return [
                         coreMeta,
                         coreMeta.BATCH.FILE,
-                        optionalFile,
+                     // optionalFile,
                         coreMeta.STAGING.ARGS,
                         ] }
 
