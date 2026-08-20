@@ -4,7 +4,7 @@
 
 def parseSupplementary ( supplementary, PARAMS ){
 
-    if (supplementary && '=' in supplementary ) { // UPGRADE
+    if ( supplementary instanceof String && supplementary.contains('=') ) { // UPGRADE
 
         supplementary
             // simplify delimiter
