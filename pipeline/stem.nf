@@ -314,7 +314,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "query/$indexMeta.run" }
+                return "query/$indexMeta.TAG" }
             index {
                 path   'bridge-query-summaries.csv'
                 header true
@@ -328,7 +328,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "query/$indexMeta.run/split" }
+                return "query/$indexMeta.TAG/split" }
             index {
                 path   'bridge-query-accessions.csv'
                 header true
