@@ -111,7 +111,7 @@ workflow {
 
             | map { coreMeta ->
 
-                def (entryType) = coreMeta.INFO.FIELDS
+                def entryType = coreMeta.INFO.FIELDS[0]
 
                 def coreMetaNew = [
                     ID    : coreMeta.ID,
