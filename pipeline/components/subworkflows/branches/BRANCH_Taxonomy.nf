@@ -7,15 +7,15 @@ include {
     viewMeta as viewMeta;
     getGroupKey as getGroupKey;
     groupOutputs as groupOutputs;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../functions/core/Utils"
 
 include { 
     Config_Parse as ParseConfig;
-    } from "${params.importMap.subworkflows}/core/Config_Parse"
+    } from "../core/Config_Parse"
 
 include {
     STAGING as DownloadCustom;
-    } from "${params.importMap.subworkflows}/leaves/custom/download/STAGING_Custom_Download.nf"
+    } from "../leaves/custom/download/STAGING_Custom_Download.nf"
 
 ////LEAF_IMPORT////
 
@@ -47,6 +47,6 @@ workflow SUBWORKFLOW {
 
     emit :
 
-        Main = Processed
+        Processed
 
     }

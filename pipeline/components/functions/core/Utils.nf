@@ -1,11 +1,10 @@
-import java.nio.file.Files
 
 // FUNCTIONS
 
 
 def parseSupplementary ( supplementary, PARAMS ){
 
-    if (supplementary && supplementary instanceof String) {
+    if ( supplementary instanceof String && supplementary.contains('=') ) { // UPGRADE
 
         supplementary
             // simplify delimiter
@@ -189,17 +188,17 @@ def formatArguments (arguments, seperator, indent) {
 	return argumentList }
 
 
+// LOOKUP ALIAS
+def checkAlias ( original, aliasMap) { // UPGRADE
+    
+    def updated = (aliasMap && aliasMap.containsKey(original))
+        ? aliasMap[(original)]
+        : original 
+
+    return updated }
+
 
 def formatTags( CONFIG ){
-
-    // LOOKUP ALIAS
-    def checkAlias = { original, aliasMap -> 
-        
-        def updated = (aliasMap && aliasMap.containsKey(original))
-            ? aliasMap[(original)]
-            : original 
-
-        return updated }
 
     // module tag (OPTIONAL)
     def moduleTag = !CONFIG.LABEL.MODULE 
@@ -221,7 +220,7 @@ def formatTags( CONFIG ){
 
     // remove arguments with null flag alias
     CONFIG.LABEL.ALIASES
-        .findAll{ key, value -> value == null }
+        .findAll{ _key, value -> value == null }
         .keySet()
         .each { key -> settings.remove(key) }
 
@@ -273,9 +272,10 @@ def formatTags( CONFIG ){
     def tagList = [
         moduleTag,
         versionTag,
-        *argumentTags,
+        argumentTags, // UPGRADE
         preTag,
         ]
+        .flatten()
         .findAll()     
 
     return tagList }
@@ -290,7 +290,7 @@ def preStage( args ){
     def tagDefault   = args.tagDefault
 
     def tagNew = makeTag(
-        tags      : [coreMeta.TAG, *formatTags(configMeta)],
+        tags      : [coreMeta.TAG, formatTags(configMeta)].flatten(), // UPGRADE
         delimiter : tagDelimiter,
         default   : tagDefault,
         )
@@ -304,9 +304,9 @@ def preStage( args ){
 
 
 
-def joinList( object, wrap = '\"', separator = ', ' ) {
+def joinList( object, wrap = '\"', _separator = ', ' ) {
 
-    assert object instanceof List,
+    assert object instanceof List:
         "Unexpected list object; found \"${object.getClass()}\" class"
 
     def wrapped = object.collect{ item -> "${wrap}${item}${wrap}" }
@@ -415,7 +415,7 @@ def getNestStructure( outputMeta, keyList = []) {
 def updateNestPath( coreOutputMeta, outputMeta, pathList ) {
 
     // check SOFTWARE -> COMMAND -> BRANCH
-    assert pathList.size() == 3, 
+    assert pathList.size() == 3:
         "Unexpected output map structure; found ${pathList.size()} levels \"${pathList.join(', ')}\", "
 
     def ( software, command, branch ) = pathList
@@ -449,7 +449,7 @@ def updateMap( coreOutputMeta, pathList, leafObj ) {
     def ( software, command, branch, type ) = pathList
 
     // check SOFTWARE -> COMMAND -> BRANCH
-    assert software && command && ((branch && type) || (branch && !type)), 
+    assert software && command && ((branch && type) || (branch && !type)): 
         "Unexpected output map structure; found ${pathList.size()} levels \"${pathList.join(', ')}\", "
 
     // conform leaf object within type map as required
@@ -732,8 +732,8 @@ def getSubMap( mapObj, pathList ){
             // 2. Check if the specific key exists in the current container
             if (!(accumulator instanceof Map) || !accumulator.containsKey(key)) {
                 throw new Exception("Subpath not found; key \"$key\" missing in nested parent (${accumulator instanceof Map ? accumulator.keySet() : 'not a map'})") }
-            
-            return accumulator."$key" }
+
+            return accumulator["$key"] } // UPGRADE
 
         // store within submap
         def current = subMap

@@ -18,7 +18,7 @@
           },
           "ARGS": {
             "CORE": {},
-            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Custom_Download_Taxonomy.tsv"
+            "SWEEP": "inputs/config/SweepInfo_Custom_Download_Taxonomy.tsv"
           }
         }
       }
@@ -36,7 +36,7 @@
           },
           "ARGS": {
             "CORE": {},
-            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Custom_Tabulate_Format.tsv"
+            "SWEEP": "inputs/config/SweepInfo_Custom_Tabulate_Format.tsv"
           }
         }
       }
@@ -77,7 +77,7 @@
               "--mag"             : "exclude",
               "--reference"       : true
             },
-            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Summary_Query.tsv"
+            "SWEEP": "inputs/config/SweepInfo_Datasets_Summary_Query.tsv"
           }
         }
       }
@@ -104,7 +104,7 @@
               "--no-progressbar": true,
               "--include": "genome,protein,gbff,seq-report"
               },
-            "SWEEP": "/Users/matt/Developer/GitHub/ncbi-download/pipeline/inputs/config/SweepInfo_Datasets_Download_Fetch.tsv"
+            "SWEEP": "inputs/config/SweepInfo_Datasets_Download_Fetch.tsv"
           }
         }
       }

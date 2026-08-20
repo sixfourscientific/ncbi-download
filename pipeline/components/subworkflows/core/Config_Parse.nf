@@ -2,7 +2,7 @@
 
 include { 
     parseConfig as parseConfig;
-    } from "$params.importMap.functions/core/Files"
+    } from "../../functions/core/Files"
 
 workflow Config_Parse {
 
@@ -21,8 +21,10 @@ workflow Config_Parse {
             branch     : PathMeta.branch,
             )
 
+        Parsed = channel.from(Configs)
+
     emit:
 
-        Main = Channel.from(Configs)
+        Parsed
 
     }

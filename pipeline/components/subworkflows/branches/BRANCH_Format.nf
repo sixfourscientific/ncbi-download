@@ -5,15 +5,15 @@
 
 include { 
     viewMeta as viewMeta;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../functions/core/Utils"
 
 include { 
     Config_Parse as ParseConfig;
-    } from "${params.importMap.subworkflows}/core/Config_Parse"
+    } from "../core/Config_Parse"
 
 include {
     STAGING as TabulateCustom;
-    } from "${params.importMap.subworkflows}/leaves/custom/tabulate/STAGING_Custom_Tabulate.nf"
+    } from "../leaves/custom/tabulate/STAGING_Custom_Tabulate.nf"
 
 ////LEAF_IMPORT////
 
@@ -45,6 +45,6 @@ workflow SUBWORKFLOW {
 
     emit :
 
-        Main = Processed
+        Processed
 
     }

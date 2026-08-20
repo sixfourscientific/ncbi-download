@@ -5,11 +5,11 @@
 
 include { 
     viewMeta as viewMeta;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../functions/core/Utils"
 
 include { 
     Config_Parse as ParseConfig;
-    } from "${params.importMap.subworkflows}/core/Config_Parse"
+    } from "../core/Config_Parse"
 
 ////LEAF_IMPORT////
 
@@ -87,10 +87,10 @@ workflow SUBWORKFLOW {
         ////LEAF_PARSE_RUN////
 
         | set { Processed }
-    
+
 
     emit :
 
-        Main = Processed
+        Processed
 
     }

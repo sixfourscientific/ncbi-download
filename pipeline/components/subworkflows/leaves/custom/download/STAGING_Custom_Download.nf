@@ -6,11 +6,11 @@
 include { 
     preStage  as preStage;
     postStage as postStage;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../../../functions/core/Utils"
 
 include { 
     MODULE as Run;
-    } from "${params.importMap.subworkflows}/leaves/custom/download/MODULE_Custom_Download.nf"
+    } from "./MODULE_Custom_Download.nf"
 
 workflow STAGING {
 
@@ -37,7 +37,7 @@ workflow STAGING {
                         tagDelimiter : null,
                         tagDefault   : null,                        
                         )
-                        
+
                     return coreMetaNew }
 
 
@@ -60,7 +60,7 @@ workflow STAGING {
                 | map { coreMeta, output ->
 
                     def updateList = [
-                        [['CUSTOM','DOWNLOAD', coreMeta.STAGING.BRANCH, 'main'],  output],
+                        [['CUSTOM', 'DOWNLOAD', coreMeta.STAGING.BRANCH, 'main'],  output],
                         ]
 
                     def coreMetaNew = postStage( 
@@ -78,6 +78,6 @@ workflow STAGING {
 
     emit:
 
-        Main = Processed
+        Processed
 
     }

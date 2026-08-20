@@ -4,26 +4,9 @@
 nextflow.enable.dsl = 2
 
 
-
-
-// IMPORTS
-
-import java.nio.file.Files
-
 // FUNCTIONS
 
 params.PUBLISH = true
-
-params.importMap = [ 'subworkflows', 'functions' ]
-
-        .collectEntries { subDir -> 
-
-                def subPath = [ workflow.projectDir, 'components', subDir, ]
-                
-                        .join('/')
-                
-                return [ (subDir) : subPath ] }
-
 
 include { 
     parseSupplementary as parseSupplementary;
@@ -31,86 +14,91 @@ include {
     prepBridge as prepBridge;
     parseUrl as parseUrl;
     makeTag as makeTag;
-    } from "$params.importMap.functions/core/Utils"
+    } from "./components/functions/core/Utils"
 
 // SUBWORKFLOWS
 
 include { 
     Info_Parse as ParseInfo;
-    } from "${params.importMap.subworkflows}/core/Info_Parse"
+    } from "./components/subworkflows/core/Info_Parse"
+
+include { 
+    Dummy_Add as AddDummy;
+    } from "./components/subworkflows/core/Dummy_Add"
 
 include { 
     Subsets_Parse as ParseSubsets;
-    } from "${params.importMap.subworkflows}/core/Subsets_Parse"
+    } from "./components/subworkflows/core/Subsets_Parse"
 
 include {
     SUBWORKFLOW as Query;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Query"
+    } from "./components/subworkflows/branches/BRANCH_Query"
 
 include {
     SUBWORKFLOW as Count;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Count"
+    } from "./components/subworkflows/branches/BRANCH_Count"
 
 include {
     SUBWORKFLOW as Format;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Format"
+    } from "./components/subworkflows/branches/BRANCH_Format"
 
 include {
     SUBWORKFLOW as Split;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Split"
+    } from "./components/subworkflows/branches/BRANCH_Split"
 
 include {
     SUBWORKFLOW as Examine;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Examine"
+    } from "./components/subworkflows/branches/BRANCH_Examine"
 
 include {
     SUBWORKFLOW as Filter;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Filter"
+    } from "./components/subworkflows/branches/BRANCH_Filter"
 
 include {
     SUBWORKFLOW as Collect;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Collect"
+    } from "./components/subworkflows/branches/BRANCH_Collect"
 
 include {
     SUBWORKFLOW as Fetch;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Fetch"
+    } from "./components/subworkflows/branches/BRANCH_Fetch"
 
 include {
     SUBWORKFLOW as Divide;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Divide"
+    } from "./components/subworkflows/branches/BRANCH_Divide"
 
 include {
     SUBWORKFLOW as Taxonomy;
-    } from "${params.importMap.subworkflows}/branches/BRANCH_Taxonomy"
+    } from "./components/subworkflows/branches/BRANCH_Taxonomy"
 
 ////BRANCH_IMPORT////
-
-
-// SETUP
-
-taxonomySubdir = 'taxonomy'
-datasetsSubdir = 'datasets'
-
-parseSupplementary( params.supplementary, params )
-
-Parameters = params
-
-EXECUTE  = params.execute.split(',')
-
-RUN_QUERY = EXECUTE.contains('query')
-
-RUN_FETCH = EXECUTE.contains('fetch')
-
-////BRANCH_FILTER////
 
 
 workflow { 
 
     main:
 
-        println('PARSING INPUTS...')
+
+        // SETUP
+
+        params.taxonomySubdir = 'taxonomy'
+        params.datasetsSubdir = 'datasets'
+
+        parseSupplementary( params.supplementary, params )
+
+        Parameters = params
+
+        EXECUTE  = params.execute.split(',')
+
+        RUN_QUERY = EXECUTE.contains('query')
+
+        RUN_FETCH = EXECUTE.contains('fetch')
+
+        ////BRANCH_FILTER////
+
 
         // MAIN
+
+        println('PARSING INPUTS...')
 
         def InputMeta = (params.INPUT?.MAIN ?: [:]) + [
             INFO     : params.inputs,
@@ -123,7 +111,7 @@ workflow {
 
             | map { coreMeta ->
 
-                def (entryType) = coreMeta.INFO.FIELDS
+                def entryType = coreMeta.INFO.FIELDS[0]
 
                 def coreMetaNew = [
                     ID    : coreMeta.ID,
@@ -132,6 +120,8 @@ workflow {
                     ]
 
                 return coreMetaNew }
+
+        Inputs = AddDummy(Inputs, [ dummy : 'optional.dummy' ])
 
         // SUPPLEMENTARY
 
@@ -162,7 +152,6 @@ workflow {
                 return coreMetaNew }
 
 
-
         // BRANCHES
 
         println('RUNNING BRANCHES...')
@@ -176,35 +165,37 @@ workflow {
         Query( Parameters, Inputs | filter { RUN_QUERY || RUN_FETCH }  )
 
         // examine report availability
-        Count( Parameters, Query.out.Main )
+        Count( Parameters, Query.out )
 
         // reformat json/jsonl as tsv
-        Format( Parameters, Count.out.Main | filter { coreMeta -> coreMeta.AVAILABLE }  )
+        Format( Parameters, Count.out | filter { coreMeta -> coreMeta.AVAILABLE } )
 
         // seperate individual reports
-        Split( Parameters, Format.out.Main )
+        Split( Parameters, Format.out )
 
         // examine accessions mapped to query IDs 
-        Examine( Parameters, Split.out.Main )
+        Examine( Parameters, Split.out )
 
         // filter accessions according to criteria
-        Filter( Parameters, Examine.out.Main )
+        Filter( Parameters, Examine.out )
 
 
         // FETCH
 
         // collect accessions
-        Collect( Parameters, Filter.out.Main )
+        Collect( Parameters, Filter.out )
 
         // subset accesssions into batches
-        ParseSubsets( Parameters, Collect.out.Main )
+        ParseSubsets( Parameters, Collect.out )
 
         // download datasets
-        Fetch( Parameters, ParseSubsets.out.Main | filter { RUN_FETCH }  )
+        Fetch( Parameters, ParseSubsets.out | filter { RUN_FETCH } )
 
         // divide datasets
-        Divide( Parameters, Fetch.out.Main )
+        Divide( Parameters, Fetch.out )
 
+
+        // TAXONOMY
 
         // obtain supplementary taxonomy files (if provided)
         Taxonomy( Parameters, TAXONOMY )
@@ -212,10 +203,13 @@ workflow {
         ////BRANCH_RUN////
 
 
+    /*
+    */
+
 
     publish: 
     
-        Format = Format.out.Main.map{ coreMeta -> 
+        Format = Format.out.map{ coreMeta ->
 
             def indexMeta = [
                 results : coreMeta.total,
@@ -229,11 +223,11 @@ workflow {
                 BASIC     : false, 
                 UPDATE    : false, 
                 INTERIM   : false,
-                )      
+                )
 
             return indexMetaNew }
 
-        Examine = Examine.out.Main.map{ coreMeta -> 
+        Examine = Examine.out.map{ coreMeta ->
 
             def indexMeta = [
                 accession : coreMeta.report.accession,
@@ -246,11 +240,11 @@ workflow {
                 BASIC     : false, 
                 UPDATE    : false, 
                 INTERIM   : false,
-                )      
+                )
             
             return indexMetaNew }
 
-        Fetch = Divide.out.Main.map{ coreMeta -> 
+        Fetch = Divide.out.map{ coreMeta ->
 
             def indexMeta = [
                 files : coreMeta.OUTPUTS.DATASETS.DOWNLOAD.FETCH.main,
@@ -262,11 +256,11 @@ workflow {
                 BASIC     : false, 
                 UPDATE    : false, 
                 INTERIM   : false,
-                )      
+                )
             
             return indexMetaNew }
 
-        Taxonomy = Taxonomy.out.Main.map{ coreMeta -> 
+        Taxonomy = Taxonomy.out.map{ coreMeta ->
 
             def indexMeta = [
                 files : coreMeta.OUTPUTS.CUSTOM.DOWNLOAD.TAXONOMY.main,
@@ -278,22 +272,22 @@ workflow {
                 BASIC     : false, 
                 UPDATE    : false, 
                 INTERIM   : false,
-                )            
+                )
             
             return indexMetaNew }
 
-        Main = Divide.out.Main.unique{ coreMeta -> coreMeta.TAG }.map{ coreMeta -> 
+        Main = Divide.out.unique{ coreMeta -> coreMeta.TAG }.map{ coreMeta ->
 
             // N.B. general bridge using first element
 
             def taxonomySubdir = params.TAXONOMY 
-                ? "${workflow.outputDir}/$taxonomySubdir"
+                ? "${workflow.outputDir}/$params.taxonomySubdir"
                 : 'NA'
             
             def indexMeta = [
                 ID       : 'datasets',
                 TAG      : coreMeta.TAG,
-                datasets : "${workflow.outputDir}/$datasetsSubdir/$coreMeta.TAG",
+                datasets : "${workflow.outputDir}/$params.datasetsSubdir/$coreMeta.TAG",
                 taxonomy : taxonomySubdir,
                 ]
             
@@ -303,7 +297,7 @@ workflow {
                 BASIC     : true, 
                 UPDATE    : false, 
                 INTERIM   : false,
-                )      
+                )
             
             return indexMetaNew }
 
@@ -320,7 +314,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "query/$indexMeta.run" }
+                return "query/$indexMeta.TAG" }
             index {
                 path   'bridge-query-summaries.csv'
                 header true
@@ -334,7 +328,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                return "query/$indexMeta.run/split" }
+                return "query/$indexMeta.TAG/split" }
             index {
                 path   'bridge-query-accessions.csv'
                 header true
@@ -348,7 +342,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                indexMeta.files >> "$datasetsSubdir/$indexMeta.TAG/" 
+                indexMeta.files >> "$params.datasetsSubdir/$indexMeta.TAG/" 
                 }
             index {
                 path   'bridge-fetch-datasets.csv'
@@ -364,7 +358,7 @@ output {
             overwrite    'standard'
             ignoreErrors false
             path { indexMeta -> 
-                indexMeta.files >> "$taxonomySubdir/" 
+                indexMeta.files >> "$params.taxonomySubdir/" 
                 }
             index {
                 path   'bridge-taxonomy.csv'

@@ -6,11 +6,11 @@
 include { 
     viewMeta as viewMeta;
     makeTag as makeTag;
-    } from "$params.importMap.functions/core/Utils"
+    } from "../../functions/core/Utils"
 
 include { 
     Config_Parse as ParseConfig;
-    } from "${params.importMap.subworkflows}/core/Config_Parse"
+    } from "../core/Config_Parse"
 
 ////LEAF_IMPORT////
 
@@ -30,7 +30,6 @@ workflow SUBWORKFLOW {
         ////LEAF_START////
 
         Inputs
-
 
         | flatMap { coreMeta ->
 
@@ -77,6 +76,6 @@ workflow SUBWORKFLOW {
 
     emit :
 
-        Main = Processed
+        Processed
 
     }
